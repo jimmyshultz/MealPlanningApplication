@@ -100,9 +100,9 @@ def check_recipe(recipe_name):
     response = requests.get(f'http://localhost:50051/check_recipe/{recipe_name}')
     return json.loads(response.content)
 
-def get_recipe_names(recipe_name):
+def get_recipe_names(cookbook_name):
     print("Trying to get recipe names from 'localhost:50051'")
-    response = requests.get(f'http://localhost:50051/recipe_names/{recipe_name}')
+    response = requests.get(f'http://localhost:50051/recipe_names/{cookbook_name}')
     return json.loads(response.content)
 
 def get_all_recipe_names():

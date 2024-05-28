@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Meal Planner</title>
+    <link rel="stylesheet" href="styles.css"> <!-- link to your stylesheet -->
+</head>
+<body>
+    <header>
+        <nav>
+            <!-- navigation menu goes here -->
+        </nav>
+    </header>
+    <main>
+        <h1>Weekly Meal Planner</h1>
+        <div id="weekly-meal-plan">
+            <table>
+                <tr>
+                  <th>Day</th>
+                  <th>Meal</th>
+                </tr>
+                <tr>
+                  <td class="day">Monday</td>
+                  <td class="meal" id="monday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Tuesday</td>
+                  <td class="meal" id="tuesday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Wednesday</td>
+                  <td class="meal" id="wednesday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Thursday</td>
+                  <td class="meal" id="thursday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Friday</td>
+                  <td class="meal" id="friday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Saturday</td>
+                  <td class="meal" id="saturday-meal"></td>
+                </tr>
+                <tr>
+                  <td class="day">Sunday</td>
+                  <td class="meal" id="sunday-meal"></td>
+                </tr>
+            </table>
+        </div>
+        <div class="menu-buttons">
+            <button id="cookbooks" onclick="displayCookbookNames()">View Cookbooks</button>
+            <button id="recipes" onclick="displayRecipeNames()">View Recipes</button>
+            <button id="main-menu" onclick="displayBlank()">Clear</button>
+        </div>
+        <div id="display-text" class="display-text"></div>
+    </main>
+    <footer>
+        <!-- footer content goes here -->
+    </footer>
+    <script src="script.js"></script> <!-- link to your script file -->
+</body>
+</html>
