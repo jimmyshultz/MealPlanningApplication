@@ -20,7 +20,7 @@ from flask_cors import CORS, cross_origin
 class DAL:
     """
     An object to interact with the MealPlanning SQL database providing 
-    its data safely to the meal planning applicaiton
+    its data safely to the meal planning application
     
     Instantiation parameters:
     - database user name
@@ -29,10 +29,18 @@ class DAL:
     Methods:
     - get cookbook names
     - get cookbook info
+    - add cookbook
+    - delete cookbook
+    - update cookbook
     - get recipe names
     - get recipe info
     - get recipe ingredients
-    
+    - add recipe
+    - delete recipe
+    - update recipe
+    - add ingredient
+    - delete ingredient
+    - update ingredient
     """
     def __init__(self, p_user_name, p_dbpassword):
         self.dbuser_name = p_user_name
@@ -41,6 +49,13 @@ class DAL:
         self.database = "MealPlanning"
 
     def get_cookbook_names(self):
+        """
+        Retrieves the names of all cookbooks from the database.
+
+        Returns:
+            list: A list of cookbook names.
+            str: An error message if there was an error connecting to the database.
+        """
         cookbook_names = []
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
@@ -58,7 +73,7 @@ class DAL:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 return "Something is wrong with your user name or password"
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
-                return "Database does not exist"
+                return "Cannot connect to the database"
             else:
                 return err
         
@@ -67,6 +82,18 @@ class DAL:
             return cookbook_names
     
     def get_cookbook_info(self, cookbook_name):
+        """
+        Retrieves information about a cookbook from the database.
+
+        Parameters:
+        - cookbook_name (str): The name of the cookbook to retrieve information for.
+
+        Returns:
+        - tuple: A tuple containing the information about the cookbook, or None if the cookbook does not exist.
+
+        Raises:
+        - mysql.connector.Error: If there is an error accessing the database.
+        """
         try:
             cookbook_info = ()
             connector = mysql.connector.connect(user=self.dbuser_name, 
@@ -91,8 +118,17 @@ class DAL:
             connector.close()
             return cookbook_info
         
-    #add cookbook
     def add_cookbook(self, cookbook_name, is_book, website=None):
+        """
+        Adds a new cookbook to the database.
+    
+        Parameters:
+        - cookbook_name (str): The name of the cookbook to be added.
+    
+        Outputs:
+        - str: A success message if the cookbook is added successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -119,8 +155,17 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    #delete cookbook
     def delete_cookbook(self, cookbook_name):
+        """
+        Deletes a cookbook from the database.
+    
+        Parameters:
+        - cookbook_name (str): The name of the cookbook to be deleted.
+    
+        Outputs:
+        - str: A success message if the cookbook is deleted successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -147,8 +192,20 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    #update cookbook
     def update_cookbook(self, current_cookbook_name, new_cookbook_name, new_is_book, new_website=None):
+        """
+        Updates the name of a cookbook in the database.
+
+        Parameters:
+        - current_cookbook_name (str): The current name of the cookbook.
+        - new_cookbook_name (str): The new name for the cookbook.
+        - new_is_book (bool): Indicates whether the cookbook is a book or not.
+        - new_website (str, optional): The new website for the cookbook. Defaults to None.
+
+        Outputs:
+        - str: A success message if the cookbook is updated successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -178,6 +235,16 @@ class DAL:
                 print("MySQL connection is closed.")
         
     def get_recipe_names(self, cookbook_name=""):
+        """
+        Retrieves the names of all recipes from a specified cookbook.
+    
+        Parameters:
+        - cookbook_name (str): The name of the cookbook from which to retrieve recipe names.
+    
+        Returns:
+        - list: A list of recipe names if successful.
+        - str: An error message if an error occurs.
+        """
         recipe_names = []
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
@@ -210,6 +277,16 @@ class DAL:
             return recipe_names
     
     def get_recipe_info(self, recipe_name):
+        """
+        Retrieves information about a specific recipe.
+    
+        Parameters:
+        - recipe_name (str): The name of the recipe for which to retrieve information.
+    
+        Returns:
+        - tuple: A tuple containing recipe information if successful.
+        - str: An error message if an error occurs.
+        """
         try:
             recipe_info = ()
             connector = mysql.connector.connect(user=self.dbuser_name, 
@@ -235,6 +312,16 @@ class DAL:
             return recipe_info
         
     def get_recipe_ingredients(self, recipe_name):
+        """
+        Retrieves the ingredients of a specific recipe.
+    
+        Parameters:
+        - recipe_name (str): The name of the recipe for which to retrieve ingredients.
+    
+        Returns:
+        - list: A list of ingredients if successful.
+        - str: An error message if an error occurs.
+        """
         try:
             recipe_ingredients = []
             connector = mysql.connector.connect(user=self.dbuser_name, 
@@ -260,8 +347,17 @@ class DAL:
             connector.close()
             return recipe_ingredients
         
-    #add recipe
     def add_recipe(self, recipe_name, cookbook_name, servings):
+        """
+        Adds a new recipe to the database.
+    
+        Parameters:
+        - recipe_name (str): The name of the recipe to be added.
+    
+        Outputs:
+        - str: A success message if the recipe is added successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -288,8 +384,17 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
     
-    #delete recipe
     def delete_recipe(self, recipe_name):
+        """
+        Deletes a recipe from the database.
+    
+        Parameters:
+        - recipe_name (str): The name of the recipe to be deleted.
+    
+        Outputs:
+        - str: A success message if the recipe is deleted successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -316,8 +421,20 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
     
-    #update recipe
     def update_recipe(self, current_recipe_name, new_recipe_name, new_cookbook_name, new_servings):
+        """
+        Updates the name of a recipe in the database.
+
+        Parameters:
+        - current_recipe_name (str): The current name of the recipe.
+        - new_recipe_name (str): The new name for the recipe.
+        - new_cookbook_name (str): The new name of the cookbook the recipe belongs to.
+        - new_servings (int): The new number of servings for the recipe.
+
+        Outputs:
+        - str: A success message if the recipe is updated successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -346,8 +463,18 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    #add ingredient
     def add_ingredient(self, ingredient_name):
+        """
+        Adds a new ingredient to the database.
+    
+        Parameters:
+        - ingredient_name (str): The name of the ingredient to be added.
+    
+        Outputs:
+        - str: A success message if the ingredient is added successfully.
+        - str: An error message if an error occurs.
+        """
+
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -374,8 +501,17 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    #delete ingredient
     def delete_ingredient(self, ingredient_name):
+        """
+        Deletes an ingredient from the database.
+    
+        Parameters:
+        - ingredient_name (str): The name of the ingredient to be deleted.
+    
+        Outputs:
+        - str: A success message if the ingredient is deleted successfully.
+        - str: An error message if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -402,8 +538,18 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    #update ingredient
     def update_ingredient(self, current_ingredient_name, new_ingredient_name):
+        """
+        Updates the name of an ingredient in the database.
+    
+        Parameters:
+        - current_ingredient_name (str): The current name of the ingredient.
+        - new_ingredient_name (str): The new name for the ingredient.
+    
+        Outputs:
+        - Prints a success message to the console if the ingredient is updated successfully.
+        - Prints an error message to the console if an error occurs.
+        """
         try:
             connector = mysql.connector.connect(user=self.dbuser_name, 
                                                 password=self.dbpassword,
@@ -433,20 +579,25 @@ class DAL:
         
 class BusinessLogic:
     """
-    An object to interface between the DAL and the client providing the proper 
-    information to the frontend while shielding the database further from the 
-    user.
+    An object to interface between the Data Access Layer (DAL) and the client, providing the necessary 
+    information to the frontend while shielding the database from the user.
 
     Instantiation Parameters:
     - Data Access Layer object
 
     Methods:
-    - check day
-    - check recipe
-    - get cookbook names
-    - get cookbook info
-    - get recipe names
-    - get recipe info
+    - register_routes: Registers all the routes for the Flask application.
+        - check_recipe: Checks if a given recipe name is valid.
+        - get_cookbook_names: Returns a list of all cookbook names in the database.
+        - get_cookbook_info: Checks if a given cookbook name is in the active list and returns its information.
+        - get_recipe_names: Returns a list of all recipe names in a specific cookbook.
+        - get_all_recipe_names: Returns a list of all recipe names in the database.
+        - get_recipe_info: Checks if a given recipe name is in the active list and returns its information.
+        - add_cookbook: Adds a new cookbook to the database.
+        - delete_cookbook: Deletes a cookbook from the database.
+        - add_recipe: Adds a new recipe to the database.
+        - delete_recipe: Deletes a recipe from the database.
+    - run: Starts the Flask application.
     """
     def __init__(self, p_dal):
         self.dal = p_dal
@@ -462,14 +613,14 @@ class BusinessLogic:
         @self.app.route('/check_recipe/<p_recipe>')
         def check_recipe(p_recipe):
             """
-            This method checks if user given recipe name is valid.
-            
+            This method checks if a user-given recipe name is valid.
+        
             Parameters:
-            - string recipe name to be checked
-    
+            - p_recipe (str): The recipe name to be checked.
+        
             Returns:
-            - True or False
-    
+            - JSON response: A dictionary with a 'validity' key. The value is 
+              True if the recipe name is valid, False otherwise.
             """
             response_dict = { 'validity' : False }
             all_recipe_names = self.dal.get_recipe_names()
@@ -486,8 +637,10 @@ class BusinessLogic:
         @cross_origin()    
         def get_cookbook_names():
             """
-            This method returns a list of all the names of all the 
-            cookbooks in the database.
+            This method returns a list of all the names of all the cookbooks in the database.
+        
+            Returns:
+            - JSON response: A list of all cookbook names in the database.
             """
             all_cookbook_names = self.dal.get_cookbook_names()
             response = make_response(jsonify(all_cookbook_names))
@@ -497,17 +650,16 @@ class BusinessLogic:
         @self.app.route("/cookbook_info/<p_cookbook>") 
         def get_cookbook_info(p_cookbook):
             """
-            This method checks if user given cookbook name is in the active list of
-             cookbook names.
+            This method checks if a user-given cookbook name is in the active list of cookbook names.
             
             Parameters:
-            - list of active cookbook names
-            - string cookbook name to be checked
-    
+            - p_cookbook (str): The cookbook name to be checked.
+        
             Returns:
-            - True or False
-            - string message of information about the cookbook
-    
+            - JSON response: A dictionary with keys 'validity', 'message', and 'recipes'. 
+              'validity' is True if the cookbook name is valid, False otherwise. 
+              'message' contains information about the cookbook. 
+              'recipes' is a list of recipes in the cookbook.
             """
             response_dict = { 'validity' : False, 'message': '', 'recipes': [] }
             current_cookbook_names = self.dal.get_cookbook_names()
@@ -533,6 +685,16 @@ class BusinessLogic:
         
         @self.app.route('/add_cookbook', methods=['PUT'])
         def add_cookbook():
+            """
+            This method adds a new cookbook to the database.
+        
+            Parameters:
+            - JSON request data with keys 'new_cookbook_name', 'new_is_book', and 'new_website'.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
             data = request.json
             cookbook_name = data['new_cookbook_name']
             is_book = data['new_is_book']
@@ -545,6 +707,16 @@ class BusinessLogic:
         
         @self.app.route("/delete_cookbook/<p_cookbook>", methods=['DELETE'])
         def delete_cookbook(p_cookbook):
+            """
+            This method deletes a cookbook from the database.
+        
+            Parameters:
+            - p_cookbook (str): The name of the cookbook to be deleted.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
             self.dal.delete_cookbook(p_cookbook)
             response_dict = { 'message': f'Cookbook {p_cookbook} deleted successfully'}
             return jsonify(response_dict), 200
@@ -553,8 +725,14 @@ class BusinessLogic:
         @self.app.route("/recipe_names/<p_cookbook>")    
         def get_recipe_names(p_cookbook):
             """
-            This method returns a list of all the names of the 
-            recipes of a certain cookbook in the database.
+            This method returns a list of all the names of the recipes of a 
+            certain cookbook in the database.
+        
+            Parameters:
+            - p_cookbook (str): The name of the cookbook.
+        
+            Returns:
+            - JSON response: A list of all recipe names in the specified cookbook.
             """
             all_recipe_names = self.dal.get_recipe_names(p_cookbook)
             response = make_response(jsonify(all_recipe_names))
@@ -564,8 +742,10 @@ class BusinessLogic:
         @self.app.route("/all_recipe_names")
         def get_all_recipe_names():
             """
-            This method returns a list of the names of 
-            all the recipes in the database.
+            This method returns a list of the names of all the recipes in the database.
+        
+            Returns:
+            - JSON response: A list of all recipe names in the database.
             """
             all_recipe_names = self.dal.get_recipe_names()
             response = make_response(jsonify(all_recipe_names))
@@ -575,18 +755,15 @@ class BusinessLogic:
         @self.app.route("/recipe_info/<p_recipe>")
         def get_recipe_info(p_recipe):
             """
-            This method checks if user given recipe name is in the active list of
-             recipe names.
-            
+            This method retrieves information about a given recipe.
+        
             Parameters:
-            - list of active recipe names
-            - string recipe name to be checked
-    
+            - p_recipe (str): The name of the recipe to be checked.
+        
             Returns:
-            - True or False
-            - string message of information about the cookbook
-            - list of recipe ingredients
-    
+            - JSON response: A dictionary with keys 'message' and 'ingredients'. 
+              'message' contains information about the recipe. 
+              'ingredients' is a list of ingredients for the recipe.
             """
             recipe_info = self.dal.get_recipe_info(p_recipe)
             recipe_ingredients = self.dal.get_recipe_ingredients(p_recipe)
@@ -597,9 +774,18 @@ class BusinessLogic:
             response.content_type = 'application/json'
             return response
         
-        #add recipe
         @self.app.route('/add_recipe', methods=['PUT'])
         def add_recipe():
+            """
+            This method adds a new recipe to the database.
+        
+            Parameters:
+            - JSON request data with keys 'new_recipe_name', 'new_cookbook_name', and 'new_servings'.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
             data = request.json
             recipe_name = data['new_recipe_name']
             cookbook_name = data['new_cookbook_name']
@@ -610,14 +796,28 @@ class BusinessLogic:
             response_dict = { 'message': f'Recipe {recipe_name} added successfully'}
             return jsonify(response_dict), 200
 
-        #delete recipe
         @self.app.route("/delete_recipe/<p_recipe>", methods=['DELETE'])
         def delete_recipe(p_recipe):
+            """
+            This method deletes a recipe from the database.
+        
+            Parameters:
+            - p_recipe (str): The name of the recipe to be deleted.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
             self.dal.delete_recipe(p_recipe)
             response_dict = { 'message': f'Recipe {p_recipe} deleted successfully'}
             return jsonify(response_dict), 200
             
     def run(self):
+        """
+        This method starts the Flask application on the local machine.
+    
+        The application will be accessible at 'localhost' on port '50051'.
+        """
         print("Listening at 'localhost:50051'...")
         self.app.run(host='localhost', port=50051)
     
