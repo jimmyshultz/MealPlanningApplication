@@ -1,3 +1,7 @@
+/**
+ * Represents a cache object.
+ * @class
+ */
 class Cache {
   constructor() {
     this.cookbookNames;
@@ -7,6 +11,10 @@ class Cache {
 
 //object to hold the string of a recipe name for each day of the week
 
+/**
+ * Represents a weekly meal plan.
+ * @class
+ */
 class WeeklyMealPlan {
     constructor() {
       this.monday = "";
@@ -84,6 +92,10 @@ getAllRecipeNames();
 
 //function to get recipe names from database through the backend server
 
+/**
+ * Retrieves all recipe names from the server and stores them in the global `myCache` object.
+ * @returns {Promise} A promise that resolves to undefined when the function completes.
+ */
 async function getAllRecipeNames() {
   console.log("Trying to get recipe names from 'localhost:50051'");
   fetch(`http://localhost:50051/all_recipe_names`)
@@ -122,6 +134,12 @@ async function getRecipeInfo(recipe_name) {
 
 //function to display recipe info for selected recipe
 
+/**
+ * Displays recipe information on the webpage.
+ * 
+ * @param {object} data - The recipe data.
+ * @param {string} recipe_name - The name of the recipe.
+ */
 function displayRecipeInfo(data, recipe_name) {
   let recipeInfoHTML = `<h3 id="recipe-name">${recipe_name}</h3>`;
   recipeInfoHTML += `<p>${data.message}</p>`;
@@ -290,6 +308,7 @@ async function addCookbook(cookbook_name, isBook, website) {
     console.error('Error adding cookbook:', error);
   }
   getCookbookNames();
+  displayBlank();
 }
 
 //display a form to add a custom cookbook
@@ -346,6 +365,7 @@ async function deleteCookbook(cookbook_name) {
     console.error('Error deleting cookbook:', error);
   }
   getCookbookNames();
+  displayBlank();
 }
 
 //add a recipe to the database on cookbook info view
@@ -371,6 +391,7 @@ async function addRecipe(recipe_name, cookbook_name, servings) {
   } catch (error) {
     console.error('Error adding recipe:', error);
   }
+  displayBlank();
 }
 
 //display a form to add a custom recipe
@@ -379,11 +400,19 @@ function displayAddRecipeForm() {
   let formHTML = `<h3>Add a Recipe</h3>`;
   formHTML += `<form id="add-recipe-form">`;
   formHTML += `<label for="recipe_name">Recipe Name:</label><br>`;
-  formHTML += `<input type="text" id="recipe_name" name="recipe_name">`;
+  formHTML += `<input type="text" id="recipe_name" name="recipe_name"><br>`;
   formHTML += `<br><label for="cookbook_name">Cookbook Name:</label><br>`;
-  formHTML += `<input type="text" id="cookbook_name" name="cookbook_name">`;
-  formHTML += `<label for="servings">Number of Servings:</label><br>`;
-  formHTML += `<input type="number" id="servings" name="servings" min="1" step="1"><br>`;
+  formHTML += `<select id="cookbook_name" name="cookbook_name">`;
+  for(let i = 0; i < myCache.cookbookNames.length; i++) {
+      formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
+  }
+  formHTML += `</select><br>`;
+  formHTML += `<br><label for="servings">Number of Servings:</label><br>`;
+  formHTML += `<select id="servings" name="servings">`;
+  for(let i = 1; i <= 20; i++) {
+      formHTML += `<option value="${i}">${i}</option>`;
+  }
+  formHTML += `</select><br>`;
   formHTML += `<br><input type="submit" value="Add Recipe">`;
   formHTML += `</form>`;
 
@@ -424,4 +453,5 @@ async function deleteRecipe(recipe_name) {
   } catch (error) {
     console.error('Error deleting recipe:', error);
   }
+  displayBlank();
 }
