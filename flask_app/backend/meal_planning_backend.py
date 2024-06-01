@@ -701,7 +701,7 @@ class BusinessLogic:
             """
             response_dict = { 'validity' : False, 'message': '', 'recipes': [] }
             current_cookbook_names = self.dal.get_cookbook_names()
-            cookbook = p_cookbook.title()
+            cookbook = p_cookbook
             if cookbook in current_cookbook_names:
                 cookbook_info = self.dal.get_cookbook_info(cookbook)
                 cookbook_recipes = self.dal.get_recipe_names(cookbook)
@@ -717,6 +717,7 @@ class BusinessLogic:
                 response_dict["validity"] = False
                 response_dict["message"] = ""
 
+            print(response_dict)
             response = make_response(jsonify(response_dict))
             response.content_type = 'application/json'
             return response
