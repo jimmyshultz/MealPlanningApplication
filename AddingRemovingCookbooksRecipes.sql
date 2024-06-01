@@ -65,7 +65,7 @@ END $$
 
 DELIMITER ;
 
-CALL DeleteCookbook("Jimmy's Meals");
+CALL DeleteCookbook("Billy's Burgers");
 
 -- Update Cookbook
 
@@ -311,4 +311,51 @@ DELIMITER ;
 
 CALL UpdateIngredient('Tyme', 'Thyme');
 
--- read ingredient id
+-- add ingredient and recipe to meal relation together
+
+DROP PROCEDURE IF EXISTS AddIngredientRecipePairing;
+
+DELIMITER $$
+
+CREATE PROCEDURE AddIngredientRecipePairing(
+    myIngredient VARCHAR(100),
+    myRecipe VARCHAR(100)
+)
+BEGIN
+    DECLARE pairingCount INT;
+    DECLARE myIngredientId INT;
+    
+    -- Get the ID associated to the ingredient name
+    SELECT Id INTO myIngredientId
+    FROM Ingredients
+    WHERE IngredientName = myIngredient;
+    
+    IF myIngredientId IS NULL THEN
+        -- Handle the case where the ingredient does not exist
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ingredient does not exist';
+    ELSE
+		-- Check if the pairing exists
+        SELECT COUNT(*) INTO pairingCount
+        FROM meal
+        WHERE IngredientId = myIngredientId and RecipeName = myRecipe;
+
+        -- If the pairing doesn't exists, add it to the meal relation
+        IF pairingCount = 0 THEN
+            INSERT INTO Meal (RecipeName, IngredientId)
+            VALUES (myRecipe, myIngredientId);
+        ELSE
+            -- Handle the case where the pairing already exists
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Pairing already exists';
+		END IF;        
+    END IF;
+END $$
+
+DELIMITER ;
+
+SELECT Id
+FROM Ingredients
+WHERE IngredientName = "Chicken";
+
+CALL AddIngredientRecipePairing("Chicken", "Honey Lime Chili Chicken Bowl");

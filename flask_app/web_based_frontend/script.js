@@ -145,9 +145,11 @@ function displayRecipeInfo(data, recipe_name) {
   recipeInfoHTML += `<p>${data.message}</p>`;
   recipeInfoHTML += `<ul>`;
   for (let i = 0; i < data.ingredients.length; i++) {
-    recipeInfoHTML += `<li>${data.ingredients[i]}</li>`;
+    recipeInfoHTML += `<li><a onclick="displayIngredient('${data.ingredients[i]}')">${data.ingredients[i]}</a></li>`;
   }
   recipeInfoHTML += `</ul>`;
+
+  recipeInfoHTML += `<button id="add-ingredient" onclick="displayAddIngredientForm('${recipe_name}')">Add Ingredient</button><br>`
 
   //create a selector to assign recipe to a day of the week
   recipeInfoHTML += `<form id="meal-plan-assignment-form">`
@@ -162,7 +164,7 @@ function displayRecipeInfo(data, recipe_name) {
   recipeInfoHTML += `<option value="Sunday">Sunday</option>`
   recipeInfoHTML += `</select><button type="submit">Assign</button></form>`
 
-  recipeInfoHTML += `<button id="delete-recipe" onclick="deleteRecipe('${recipe_name}')">Delete Recipe</button>`;
+  recipeInfoHTML += `<br><button id="delete-recipe" onclick="deleteRecipe('${recipe_name}')">Delete Recipe</button><br>`;
 
   var displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeInfoHTML;
@@ -365,6 +367,7 @@ async function deleteCookbook(cookbook_name) {
     console.error('Error deleting cookbook:', error);
   }
   getCookbookNames();
+  getAllRecipeNames();
   displayBlank();
 }
 
@@ -452,6 +455,111 @@ async function deleteRecipe(recipe_name) {
     getAllRecipeNames();
   } catch (error) {
     console.error('Error deleting recipe:', error);
+  }
+  displayBlank();
+}
+
+// add an ingredient to the database on recipe info view
+
+async function addIngredient(recipe_name, ingredient) {
+  console.log(`Trying to add ingredient ${ingredient} to recipe ${recipe_name} in database through 'localhost:50051'`);
+  let new_ingredient_info = {new_ingredient: ingredient, recipe: recipe_name}
+
+  try {
+    const response = await fetch(`${serverDomain}/add_ingredient`, {
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(new_ingredient_info)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json()
+    console.log(data);
+  } catch (error) {
+    console.error('Error adding ingredient:', error);
+  }
+  addIngredientRecipePairing(recipe_name, ingredient);
+  getRecipeInfo(recipe_name);
+}
+
+//tie an ingredient to a recipe in the database
+async function addIngredientRecipePairing(recipe_name, ingredient) {
+  console.log(`Trying to add ingredient ${ingredient} to recipe ${recipe_name} in database through 'localhost:50051'`);
+  let new_ingredient_info = {ingredient_name: ingredient, recipe_name: recipe_name}
+
+  try {
+    const response = await fetch(`${serverDomain}/add_ingredient_recipe_pairing`, {
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(new_ingredient_info)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json()
+    console.log(data);
+  } catch (error) {
+    console.error('Error adding ingredient-recipe pairing:', error);
+  }
+  getRecipeInfo(recipe_name);
+}
+
+//display a form to add a custom ingredient
+function displayAddIngredientForm(recipe_name) {
+  let formHTML = `<h3>Add an Ingredient to <span id="recipe-name">${recipe_name}</span></h3>`;
+  formHTML += `<form id="add-ingredient-form">`;
+  formHTML += `<label for="ingredient-name">Ingredient:</label><br>`;
+  formHTML += `<input type="text" id="ingredient-name" name="ingredient-name"><br>`;
+  formHTML += `<br><input type="submit" value="Add Ingredient">`;
+  formHTML += `</form>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('add-ingredient-form').addEventListener('submit', handleAddIngredientSubmit);
+}
+
+//handle submit on add ingredient form
+
+function handleAddIngredientSubmit(event) {
+  event.preventDefault();
+  let recipe_name = document.getElementById('recipe-name').innerText;
+  let ingredient_name = document.getElementById('ingredient-name').value;
+  addIngredient(recipe_name, ingredient_name);
+}
+
+//display ingredient name and a button to delete ingredient
+function displayIngredient(ingredient_name) {
+  let ingredientHTML = `<p>${ingredient_name}</p>`;
+  ingredientHTML += `<button onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = ingredientHTML;
+}
+
+//remove an ingredient from the database on ingredient view
+async function deleteIngredient(ingredient_name) {
+  console.log(`Trying to delete ingredient ${ingredient_name} from database through 'localhost:50051'`);
+
+  try {
+    const response = await fetch(`${serverDomain}/delete_ingredient/${ingredient_name}`, {
+      method: 'DELETE', 
+      headers: { 'Content-Type': 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json()
+    console.log(data);
+  } catch (error) {
+    console.error('Error deleting ingredient:', error);
   }
   displayBlank();
 }

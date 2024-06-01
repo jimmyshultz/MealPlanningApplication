@@ -576,6 +576,44 @@ class DAL:
             if connector and connector.is_connected():
                 connector.close()
                 print("MySQL connection is closed.")
+
+    def add_ingredient_recipe_pairing(self, ingredient_name, recipe_name):
+        """
+        Adds a new ingredient-recipe pairing to the database.
+    
+        Parameters:
+        - ingredient_name (str): The name of the ingredient to be paired.
+        - recipe_name (str): The name of the recipe to be paired.
+    
+        Outputs:
+        - str: A success message if the pairing is added successfully.
+        - str: An error message if an error occurs.
+        """
+        try:
+            connector = mysql.connector.connect(user=self.dbuser_name, 
+                                                password=self.dbpassword,
+                                                host=self.host,
+                                                database=self.database)
+            cursor = connector.cursor()
+            cursor.callproc("AddIngredientRecipePairing", [ingredient_name, recipe_name])
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                print("Something is wrong with your user name or password")
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                print("Database does not exist")
+            elif err.sqlstate == '45000':
+                print(f"Error: {err.msg}")
+            else:
+                print(err)
+        else:
+            connector.commit()
+            print(f"Ingredient '{ingredient_name}' paired with recipe '{recipe_name}' successfully.")
+        finally:
+            if cursor:
+                cursor.close()
+            if connector and connector.is_connected():
+                connector.close()
+                print("MySQL connection is closed.")
         
 class BusinessLogic:
     """
@@ -810,6 +848,65 @@ class BusinessLogic:
             """
             self.dal.delete_recipe(p_recipe)
             response_dict = { 'message': f'Recipe {p_recipe} deleted successfully'}
+            return jsonify(response_dict), 200
+        
+        @self.app.route('/add_ingredient', methods=['PUT'])
+        def add_ingredient():
+            """
+            This method adds a new ingredient to the database.
+        
+            Parameters:
+            - JSON request data with a key 'ingredient_name'.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            data = request.json
+            ingredient_name = data['new_ingredient']
+
+            #Call the DAL method to add the ingredient
+            self.dal.add_ingredient(ingredient_name)
+            response_dict = { 'message': f'Ingredient {ingredient_name} added successfully'}
+            return jsonify(response_dict), 200
+        
+        @self.app.route("/delete_ingredient/<p_ingredient>", methods=['DELETE'])
+        def delete_ingredient(p_ingredient):
+            """
+            This method deletes an ingredient from the database.
+        
+            Parameters:
+            - p_ingredient (str): The name of the ingredient to be deleted.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            self.dal.delete_ingredient(p_ingredient)
+            response_dict = { 'message': f'Ingredient {p_ingredient} deleted successfully'}
+            return jsonify(response_dict), 200
+        
+        @self.app.route('/add_ingredient_recipe_pairing', methods=['PUT'])
+        def add_ingredient_recipe_pairing():
+            """
+            This method adds a new ingredient-recipe pairing to the database.
+        
+            Parameters:
+            - JSON request data
+                - 'ingredient_name': The name of the ingredient to be paired.
+                - 'recipe_name': The name of the recipe to be paired.
+            
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            data = request.json
+            ingredient_name = data['ingredient_name']
+            recipe_name = data['recipe_name']
+
+            #Call the DAL method to add the pairing
+            self.dal.add_ingredient_recipe_pairing(ingredient_name, recipe_name)
+            response_dict = { 'message': f'Ingredient {ingredient_name} paired with recipe {recipe_name} successfully'}
             return jsonify(response_dict), 200
             
     def run(self):
