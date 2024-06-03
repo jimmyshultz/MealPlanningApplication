@@ -94,44 +94,40 @@ getAllRecipeNames();
 
 
 
-//Display Functions
+// Display Functions
 
-//function to display all recipe names in browser
-
+// function to display all recipe names in browser
 function displayRecipeNames() {
-  let recipeNamesHTML = "<ul>";
+  let recipeNamesHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  recipeNamesHTML += '<h5 class="card-title">Recipe Names</h5>';
+  recipeNamesHTML += '<ul class="list-group list-group-flush">';
   for (let i = 0; i < myCache.recipeNames.length; i++) {
-    recipeNamesHTML += `<li><a onclick="getRecipeInfo('${myCache.recipeNames[i]}')">${myCache.recipeNames[i]}</a></li>`;
+    recipeNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getRecipeInfo('${myCache.recipeNames[i]}')">${myCache.recipeNames[i]}</a></li>`;
   }
-  recipeNamesHTML += "</ul>";
-  recipeNamesHTML += `<button id="add-recipe" onclick="displayAddRecipeForm()">Add Recipe</button>`;
-  var displayArea = document.getElementById('display-text');
+  recipeNamesHTML += '</ul>';
+  recipeNamesHTML += `<button class="btn btn-primary mt-3" id="add-recipe" onclick="displayAddRecipeForm()">Add Recipe</button>`;
+  recipeNamesHTML += '</div></div></div>';
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeNamesHTML;
 }
 
-//function to display recipe info for selected recipe
-
-/**
- * Displays recipe information on the webpage.
- * 
- * @param {object} data - The recipe data.
- * @param {string} recipe_name - The name of the recipe.
- */
+// function to display recipe info for selected recipe
 function displayRecipeInfo(data, recipe_name) {
-  let recipeInfoHTML = `<h3 id="recipe-name">${recipe_name}</h3>`;
-  recipeInfoHTML += `<p>${data.message}</p>`;
-  recipeInfoHTML += `<ul>`;
+  let recipeInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
+  recipeInfoHTML += `<h5 class="card-title" id="recipe-name">${recipe_name}</h5>`;
+  recipeInfoHTML += `<p class="card-text">${data.message}</p>`;
+  recipeInfoHTML += '<ul class="list-group list-group-flush mb-3">';
   for (let i = 0; i < data.ingredients.length; i++) {
-    recipeInfoHTML += `<li><a onclick="displayIngredient('${data.ingredients[i]}')">${data.ingredients[i]}</a></li>`;
+    recipeInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="displayIngredient('${data.ingredients[i]}')">${data.ingredients[i]}</a></li>`;
   }
-  recipeInfoHTML += `</ul>`;
+  recipeInfoHTML += '</ul>';
+  recipeInfoHTML += `<button class="btn btn-primary mb-3" id="add-ingredient" onclick="displayAddIngredientForm('${recipe_name}')">Add Ingredient</button>`;
 
-  recipeInfoHTML += `<button id="add-ingredient" onclick="displayAddIngredientForm('${recipe_name}')">Add Ingredient</button><br>`
-
-  //create a selector to assign recipe to a day of the week
+  // create a selector to assign recipe to a day of the week
   recipeInfoHTML += `<form id="meal-plan-assignment-form">`
   recipeInfoHTML += `<p>Add ${recipe_name} to Weekly Meal Plan: </p>`
-  recipeInfoHTML += `<select id="day-of-week" name="day-of-week">`
+  recipeInfoHTML += `<div class="input-group mb-3">`
+  recipeInfoHTML += `<select class="form-select" id="day-of-week" name="day-of-week">`
   recipeInfoHTML += `<option value="Monday">Monday</option>`
   recipeInfoHTML += `<option value="Tuesday">Tuesday</option>`
   recipeInfoHTML += `<option value="Wednesday">Wednesday</option>`
@@ -139,18 +135,18 @@ function displayRecipeInfo(data, recipe_name) {
   recipeInfoHTML += `<option value="Friday">Friday</option>`
   recipeInfoHTML += `<option value="Saturday">Saturday</option>`
   recipeInfoHTML += `<option value="Sunday">Sunday</option>`
-  recipeInfoHTML += `</select><button type="submit">Assign</button></form>`
+  recipeInfoHTML += `</select><button class="btn btn-secondary" type="submit">Assign</button></div></form>`
 
-  recipeInfoHTML += `<br><button id="delete-recipe" onclick="deleteRecipe('${recipe_name}')">Delete Recipe</button><br>`;
+  recipeInfoHTML += `<br><button class="btn btn-danger" id="delete-recipe" onclick="deleteRecipe('${recipe_name}')">Delete Recipe</button>`;
+  recipeInfoHTML += `</div></div></div>`;
 
-  var displayArea = document.getElementById('display-text');
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeInfoHTML;
 
   document.getElementById('meal-plan-assignment-form').addEventListener('submit', assignRecipeToDay);
 }
 
-//function to refresh html table displaying recipes and days of the week
-
+// function to refresh html table displaying recipes and days of the week
 function refreshMealPlanTable() {
   let mondayMeal = myMealPlan.getMonday();
   let tuesdayMeal = myMealPlan.getTuesday();
@@ -178,112 +174,120 @@ function refreshMealPlanTable() {
 }
 
 // function to display cookbook names in browser
-
 function displayCookbookNames() {
-  let cookbookNamesHTML = "<ul>";
+  let cookbookNamesHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  cookbookNamesHTML += '<h5 class="card-title">Cookbook Names</h5>';
+  cookbookNamesHTML += '<ul class="list-group list-group-flush">';
   for (let i = 0; i < myCache.cookbookNames.length; i++) {
-    cookbookNamesHTML += `<li><a onclick="getCookbookInfo('${myCache.cookbookNames[i]}')">${myCache.cookbookNames[i]}</a></li>`;
-
+    cookbookNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getCookbookInfo('${myCache.cookbookNames[i]}')">${myCache.cookbookNames[i]}</a></li>`;
   }
-  cookbookNamesHTML += "</ul>";
-  cookbookNamesHTML += `<button id="add-cookbook" onclick="displayAddCookbookForm()">Add Cookbook</button>`;
-  var displayArea = document.getElementById('display-text');
+  cookbookNamesHTML += '</ul>';
+  cookbookNamesHTML += `<button class="btn btn-primary mt-3" id="add-cookbook" onclick="displayAddCookbookForm()">Add Cookbook</button>`;
+  cookbookNamesHTML += '</div></div></div>';
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = cookbookNamesHTML;
 }
 
-//function to display cookbook info in browser
+// function to display cookbook info in browser
 function displayCookbookInfo(data, cookbook_name) {
-  let cookbookInfoHTML = `<h3>${cookbook_name}</h3>`;
-  cookbookInfoHTML += `<p>${data.message}</p>`;
-  cookbookInfoHTML += `<p>Recipes: </p>`;
-  cookbookInfoHTML += `<ul>`;
+  let cookbookInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
+  cookbookInfoHTML += `<h5 class="card-title">${cookbook_name}</h5>`;
+  cookbookInfoHTML += `<p class="card-text">${data.message}</p>`;
+  cookbookInfoHTML += `<p class="card-text">Recipes: </p>`;
+  cookbookInfoHTML += '<ul class="list-group list-group-flush mb-3">';
   for (let i = 0; i < data.recipes.length; i++) {
-    cookbookInfoHTML += `<li><a onclick="getRecipeInfo('${data.recipes[i]}')">${data.recipes[i]}</a></li>`;
+    cookbookInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getRecipeInfo('${data.recipes[i]}')">${data.recipes[i]}</a></li>`;
   }
-  cookbookInfoHTML += `</ul>`;
-  cookbookInfoHTML += `<button id="delete-cookbook" onclick="deleteCookbook('${cookbook_name}')">Delete Cookbook</button>`;
-  var displayArea = document.getElementById('display-text');
+  cookbookInfoHTML += '</ul>';
+  cookbookInfoHTML += `<button class="btn btn-danger" id="delete-cookbook" onclick="deleteCookbook('${cookbook_name}')">Delete Cookbook</button>`;
+  cookbookInfoHTML += `</div></div></div>`;
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = cookbookInfoHTML;
 }
 
-//function to return to blank display data
+// function to return to blank display data
 function displayBlank() {
-  var displayArea = document.getElementById('display-text');
-  displayArea.innerHTML = "";  
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = "";
 }
 
-//display a form to add a custom cookbook
-
+// display a form to add a custom cookbook
 function displayAddCookbookForm() {
-  let formHTML = `<h3>Add a Cookbook</h3>`;
-  formHTML += `<form id="add-cookbook-form">`;
-  formHTML += `<label for="cookbook_name">Cookbook Name:</label><br>`;
-  formHTML += `<input type="text" id="cookbook_name" name="cookbook_name">`;
-  formHTML += `<br><label for="is_book">Is this a physical book?</label> <br>`;
-  formHTML += `<input type="radio" id="is_book_yes" name="is_book" value="yes">`;
-  formHTML += `<label for="is_book_yes">Yes</label>`;
-  formHTML += `<input type="radio" id="is_book_no" name="is_book" value="no">`;
-  formHTML += `<label for="is_book_no">No</label>`;
-  formHTML += `<br><label for="website">Website:</label><br>`;
-  formHTML += `<input type="text" id="website" name="website">`;
-  formHTML += `<br><input type="submit" value="Add Cookbook">`;
-  formHTML += `</form>`;
+  let formHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  formHTML += '<h5 class="card-title">Add a Cookbook</h5>';
+  formHTML += '<form id="add-cookbook-form" class="mb-3">';
+  formHTML += '<div class="mb-3"><label for="cookbook_name" class="form-label">Cookbook Name:</label>';
+  formHTML += '<input type="text" class="form-control" id="cookbook_name" name="cookbook_name"></div>';
+  formHTML += '<div class="mb-3"><label for="is_book" class="form-label">Is this a physical book?</label><br>';
+  formHTML += '<div class="form-check form-check-inline">';
+  formHTML += '<input class="form-check-input" type="radio" id="is_book_yes" name="is_book" value="yes">';
+  formHTML += '<label class="form-check-label" for="is_book_yes">Yes</label></div>';
+  formHTML += '<div class="form-check form-check-inline">';
+  formHTML += '<input class="form-check-input" type="radio" id="is_book_no" name="is_book" value="no">';
+  formHTML += '<label class="form-check-label" for="is_book_no">No</label></div></div>';
+  formHTML += '<div class="mb-3"><label for="website" class="form-label">Website (if applicable):</label>';
+  formHTML += '<input type="url" class="form-control" id="website" name="website"></div>';
+  formHTML += '<button type="submit" class="btn btn-primary">Add Cookbook</button></form>';
+  formHTML += '</div></div></div>';
 
-  let displayArea = document.getElementById('display-text');
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = formHTML;
 
   document.getElementById('add-cookbook-form').addEventListener('submit', handleAddCookbookSubmit);
 }
 
-//display a form to add a custom recipe
-
+// display a form to add a custom recipe
 function displayAddRecipeForm() {
-  let formHTML = `<h3>Add a Recipe</h3>`;
-  formHTML += `<form id="add-recipe-form">`;
-  formHTML += `<label for="recipe_name">Recipe Name:</label><br>`;
-  formHTML += `<input type="text" id="recipe_name" name="recipe_name"><br>`;
-  formHTML += `<br><label for="cookbook_name">Cookbook Name:</label><br>`;
-  formHTML += `<select id="cookbook_name" name="cookbook_name">`;
-  for(let i = 0; i < myCache.cookbookNames.length; i++) {
-      formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
+  let formHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  formHTML += '<h5 class="card-title">Add a Recipe</h5>';
+  formHTML += '<form id="add-recipe-form" class="mb-3">';
+  formHTML += '<div class="mb-3"><label for="recipe_name" class="form-label">Recipe Name:</label>';
+  formHTML += '<input type="text" class="form-control" id="recipe_name" name="recipe_name"></div>';
+  formHTML += '<div class="mb-3"><label for="cookbook_name" class="form-label">Cookbook Name:</label>';
+  formHTML += '<select class="form-select" id="cookbook_name" name="cookbook_name">';
+  for (let i = 0; i < myCache.cookbookNames.length; i++) {
+    formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
   }
-  formHTML += `</select><br>`;
-  formHTML += `<br><label for="servings">Number of Servings:</label><br>`;
-  formHTML += `<select id="servings" name="servings">`;
-  for(let i = 1; i <= 20; i++) {
-      formHTML += `<option value="${i}">${i}</option>`;
+  formHTML += '</select></div>';
+  formHTML += '<div class="mb-3"><label for="servings" class="form-label">Number of Servings:</label>';
+  formHTML += '<select class="form-select" id="servings" name="servings">';
+  for (let i = 1; i <= 20; i++) {
+    formHTML += `<option value="${i}">${i}</option>`;
   }
-  formHTML += `</select><br>`;
-  formHTML += `<br><input type="submit" value="Add Recipe">`;
-  formHTML += `</form>`;
+  formHTML += '</select></div>';
+  formHTML += '<button type="submit" class="btn btn-primary">Add Recipe</button></form>';
+  formHTML += '</div></div></div>';
 
-  let displayArea = document.getElementById('display-text');
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = formHTML;
 
   document.getElementById('add-recipe-form').addEventListener('submit', handleAddRecipeSubmit);
 }
 
-//display a form to add a custom ingredient
+// display a form to add a custom ingredient
 function displayAddIngredientForm(recipe_name) {
-  let formHTML = `<h3>Add an Ingredient to <span id="recipe-name">${recipe_name}</span></h3>`;
-  formHTML += `<form id="add-ingredient-form">`;
-  formHTML += `<label for="ingredient-name">Ingredient:</label><br>`;
-  formHTML += `<input type="text" id="ingredient-name" name="ingredient-name"><br>`;
-  formHTML += `<br><input type="submit" value="Add Ingredient">`;
-  formHTML += `</form>`;
+  let formHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  formHTML += `<h5 class="card-title">Add an Ingredient to <span id="recipe-name">${recipe_name}</span></h5>`;
+  formHTML += '<form id="add-ingredient-form" class="mb-3">';
+  formHTML += '<div class="mb-3"><label for="ingredient-name" class="form-label">Ingredient:</label>';
+  formHTML += '<input type="text" class="form-control" id="ingredient-name" name="ingredient-name"></div>';
+  formHTML += '<button type="submit" class="btn btn-primary">Add Ingredient</button></form>';
+  formHTML += '</div></div></div>';
 
-  let displayArea = document.getElementById('display-text');
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = formHTML;
 
   document.getElementById('add-ingredient-form').addEventListener('submit', handleAddIngredientSubmit);
 }
 
-//display ingredient name and a button to delete ingredient
+// display ingredient name and a button to delete ingredient
 function displayIngredient(ingredient_name) {
-  let ingredientHTML = `<p>${ingredient_name}</p>`;
-  ingredientHTML += `<button onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
+  let ingredientHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  ingredientHTML += `<p class="card-text">${ingredient_name}</p>`;
+  ingredientHTML += `<button class="btn btn-danger" onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
+  ingredientHTML += '</div></div></div>';
 
-  let displayArea = document.getElementById('display-text');
+  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = ingredientHTML;
 }
 
