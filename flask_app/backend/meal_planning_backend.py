@@ -717,7 +717,6 @@ class BusinessLogic:
                 response_dict["validity"] = False
                 response_dict["message"] = ""
 
-            print(response_dict)
             response = make_response(jsonify(response_dict))
             response.content_type = 'application/json'
             return response

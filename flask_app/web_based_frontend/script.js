@@ -90,22 +90,11 @@ let serverDomain = 'http://localhost:50051'
 getCookbookNames();
 getAllRecipeNames();
 
-//function to get recipe names from database through the backend server
 
-/**
- * Retrieves all recipe names from the server and stores them in the global `myCache` object.
- * @returns {Promise} A promise that resolves to undefined when the function completes.
- */
-async function getAllRecipeNames() {
-  console.log("Trying to get recipe names from 'localhost:50051'");
-  fetch(`http://localhost:50051/all_recipe_names`)
-      .then(response => { return response.json() })
-      .then(data => { 
-            console.log("Data from server:", data);
-            myCache.recipeNames = data;
-            console.log(myCache.recipeNames) })
-      .catch((error) => { console.log(error) })
-}
+
+
+
+//Display Functions
 
 //function to display all recipe names in browser
 
@@ -118,18 +107,6 @@ function displayRecipeNames() {
   recipeNamesHTML += `<button id="add-recipe" onclick="displayAddRecipeForm()">Add Recipe</button>`;
   var displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeNamesHTML;
-}
-
-//function to get recipe info for selected recipe
-
-async function getRecipeInfo(recipe_name) {
-  console.log(`Trying to get recipe info from 'localhost:50051' for ${recipe_name}`);
-  fetch(`http://localhost:50051/recipe_info/${recipe_name}`)
-      .then(response => { return response.json() })
-      .then(data => { 
-            displayRecipeInfo(data, recipe_name);
-          })
-      .catch((error) => { console.log(error) })
 }
 
 //function to display recipe info for selected recipe
@@ -172,33 +149,6 @@ function displayRecipeInfo(data, recipe_name) {
   document.getElementById('meal-plan-assignment-form').addEventListener('submit', assignRecipeToDay);
 }
 
-//function to assign recipe to day of the week in client-side object
-
-function assignRecipeToDay(event) {
-  event.preventDefault();
-
-  var recipe_name = document.getElementById('recipe-name').innerText;
-  var day_of_week = document.getElementById('day-of-week').value;
-
-  if (day_of_week == 'Monday') {
-    myMealPlan.setMonday(recipe_name);
-  } else if (day_of_week == 'Tuesday') {
-    myMealPlan.setTuesday(recipe_name);
-  } else if (day_of_week == 'Wednesday') {
-    myMealPlan.setWednesday(recipe_name);
-  } else if (day_of_week == 'Thursday') {
-    myMealPlan.setThursday(recipe_name);
-  } else if (day_of_week == 'Friday') {
-    myMealPlan.setFriday(recipe_name);
-  } else if (day_of_week == 'Saturday') {
-    myMealPlan.setSaturday(recipe_name);
-  } else if (day_of_week == 'Sunday') {
-    myMealPlan.setSunday(recipe_name);
-  }
-
-  refreshMealPlanTable();
-}
-
 //function to refresh html table displaying recipes and days of the week
 
 function refreshMealPlanTable() {
@@ -227,19 +177,6 @@ function refreshMealPlanTable() {
   sundayDisplay.innerText = sundayMeal;
 }
 
-//function to get cookbook names from db through the backend server
-
-async function getCookbookNames() {
-  console.log("Trying to get cookbook names from 'localhost:50051'");
-  fetch(`http://localhost:50051/cookbook_names`)
-      .then(response => { return response.json() })
-      .then(data => { 
-            console.log("Data from server:", data);
-            myCache.cookbookNames = data;
-            console.log(myCache.cookbookNames) })
-      .catch((error) => { console.log(error) })
-}
-
 // function to display cookbook names in browser
 
 function displayCookbookNames() {
@@ -252,18 +189,6 @@ function displayCookbookNames() {
   cookbookNamesHTML += `<button id="add-cookbook" onclick="displayAddCookbookForm()">Add Cookbook</button>`;
   var displayArea = document.getElementById('display-text');
   displayArea.innerHTML = cookbookNamesHTML;
-}
-
-//function to get cookbook info for selected cookbook
-
-async function getCookbookInfo(cookbook_name) {
-  console.log(`Trying to get cookbook info from 'localhost:50051' for ${cookbook_name}`);
-  fetch(`http://localhost:50051/cookbook_info/${cookbook_name}`)
-      .then(response => { return response.json() })
-      .then(data => { 
-            displayCookbookInfo(data, cookbook_name);
-          })
-      .catch((error) => { console.log(error) })
 }
 
 //function to display cookbook info in browser
@@ -285,6 +210,139 @@ function displayCookbookInfo(data, cookbook_name) {
 function displayBlank() {
   var displayArea = document.getElementById('display-text');
   displayArea.innerHTML = "";  
+}
+
+//display a form to add a custom cookbook
+
+function displayAddCookbookForm() {
+  let formHTML = `<h3>Add a Cookbook</h3>`;
+  formHTML += `<form id="add-cookbook-form">`;
+  formHTML += `<label for="cookbook_name">Cookbook Name:</label><br>`;
+  formHTML += `<input type="text" id="cookbook_name" name="cookbook_name">`;
+  formHTML += `<br><label for="is_book">Is this a physical book?</label> <br>`;
+  formHTML += `<input type="radio" id="is_book_yes" name="is_book" value="yes">`;
+  formHTML += `<label for="is_book_yes">Yes</label>`;
+  formHTML += `<input type="radio" id="is_book_no" name="is_book" value="no">`;
+  formHTML += `<label for="is_book_no">No</label>`;
+  formHTML += `<br><label for="website">Website:</label><br>`;
+  formHTML += `<input type="text" id="website" name="website">`;
+  formHTML += `<br><input type="submit" value="Add Cookbook">`;
+  formHTML += `</form>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('add-cookbook-form').addEventListener('submit', handleAddCookbookSubmit);
+}
+
+//display a form to add a custom recipe
+
+function displayAddRecipeForm() {
+  let formHTML = `<h3>Add a Recipe</h3>`;
+  formHTML += `<form id="add-recipe-form">`;
+  formHTML += `<label for="recipe_name">Recipe Name:</label><br>`;
+  formHTML += `<input type="text" id="recipe_name" name="recipe_name"><br>`;
+  formHTML += `<br><label for="cookbook_name">Cookbook Name:</label><br>`;
+  formHTML += `<select id="cookbook_name" name="cookbook_name">`;
+  for(let i = 0; i < myCache.cookbookNames.length; i++) {
+      formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
+  }
+  formHTML += `</select><br>`;
+  formHTML += `<br><label for="servings">Number of Servings:</label><br>`;
+  formHTML += `<select id="servings" name="servings">`;
+  for(let i = 1; i <= 20; i++) {
+      formHTML += `<option value="${i}">${i}</option>`;
+  }
+  formHTML += `</select><br>`;
+  formHTML += `<br><input type="submit" value="Add Recipe">`;
+  formHTML += `</form>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('add-recipe-form').addEventListener('submit', handleAddRecipeSubmit);
+}
+
+//display a form to add a custom ingredient
+function displayAddIngredientForm(recipe_name) {
+  let formHTML = `<h3>Add an Ingredient to <span id="recipe-name">${recipe_name}</span></h3>`;
+  formHTML += `<form id="add-ingredient-form">`;
+  formHTML += `<label for="ingredient-name">Ingredient:</label><br>`;
+  formHTML += `<input type="text" id="ingredient-name" name="ingredient-name"><br>`;
+  formHTML += `<br><input type="submit" value="Add Ingredient">`;
+  formHTML += `</form>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('add-ingredient-form').addEventListener('submit', handleAddIngredientSubmit);
+}
+
+//display ingredient name and a button to delete ingredient
+function displayIngredient(ingredient_name) {
+  let ingredientHTML = `<p>${ingredient_name}</p>`;
+  ingredientHTML += `<button onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
+
+  let displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = ingredientHTML;
+}
+
+
+
+//Server Communication Functions
+
+//function to get recipe names from database through the backend server
+
+/**
+ * Retrieves all recipe names from the server and stores them in the global `myCache` object.
+ * @returns {Promise} A promise that resolves to undefined when the function completes.
+ */
+async function getAllRecipeNames() {
+  console.log("Trying to get recipe names from 'localhost:50051'");
+  fetch(`http://localhost:50051/all_recipe_names`)
+      .then(response => { return response.json() })
+      .then(data => { 
+            console.log("Data from server:", data);
+            myCache.recipeNames = data;
+            console.log(myCache.recipeNames) })
+      .catch((error) => { console.log(error) })
+}
+
+//function to get recipe info for selected recipe
+
+async function getRecipeInfo(recipe_name) {
+  console.log(`Trying to get recipe info from 'localhost:50051' for ${recipe_name}`);
+  fetch(`http://localhost:50051/recipe_info/${recipe_name}`)
+      .then(response => { return response.json() })
+      .then(data => { 
+            displayRecipeInfo(data, recipe_name);
+          })
+      .catch((error) => { console.log(error) })
+}
+
+//function to get cookbook names from db through the backend server
+
+async function getCookbookNames() {
+  console.log("Trying to get cookbook names from 'localhost:50051'");
+  fetch(`http://localhost:50051/cookbook_names`)
+      .then(response => { return response.json() })
+      .then(data => { 
+            console.log("Data from server:", data);
+            myCache.cookbookNames = data;
+            console.log(myCache.cookbookNames) })
+      .catch((error) => { console.log(error) })
+}
+
+//function to get cookbook info for selected cookbook
+
+async function getCookbookInfo(cookbook_name) {
+  console.log(`Trying to get cookbook info from 'localhost:50051' for ${cookbook_name}`);
+  fetch(`http://localhost:50051/cookbook_info/${cookbook_name}`)
+      .then(response => { return response.json() })
+      .then(data => { 
+            displayCookbookInfo(data, cookbook_name);
+          })
+      .catch((error) => { console.log(error) })
 }
 
 //add a cookbook to the database on cookbooks view
@@ -311,39 +369,6 @@ async function addCookbook(cookbook_name, isBook, website) {
   }
   getCookbookNames();
   displayBlank();
-}
-
-//display a form to add a custom cookbook
-
-function displayAddCookbookForm() {
-  let formHTML = `<h3>Add a Cookbook</h3>`;
-  formHTML += `<form id="add-cookbook-form">`;
-  formHTML += `<label for="cookbook_name">Cookbook Name:</label><br>`;
-  formHTML += `<input type="text" id="cookbook_name" name="cookbook_name">`;
-  formHTML += `<br><label for="is_book">Is this a physical book?</label> <br>`;
-  formHTML += `<input type="radio" id="is_book_yes" name="is_book" value="yes">`;
-  formHTML += `<label for="is_book_yes">Yes</label>`;
-  formHTML += `<input type="radio" id="is_book_no" name="is_book" value="no">`;
-  formHTML += `<label for="is_book_no">No</label>`;
-  formHTML += `<br><label for="website">Website:</label><br>`;
-  formHTML += `<input type="text" id="website" name="website">`;
-  formHTML += `<br><input type="submit" value="Add Cookbook">`;
-  formHTML += `</form>`;
-
-  let displayArea = document.getElementById('display-text');
-  displayArea.innerHTML = formHTML;
-
-  document.getElementById('add-cookbook-form').addEventListener('submit', handleAddCookbookSubmit);
-}
-
-//handle submit on add cookbook form
-
-function handleAddCookbookSubmit(event) {
-  event.preventDefault();
-  let cookbook_name = document.getElementById('cookbook_name').value;
-  let isBook = document.querySelector('input[name="is_book"]:checked').value === 'yes';
-  let website = document.getElementById('website').value;
-  addCookbook(cookbook_name, isBook, website);
 }
 
 //remove a cookbook from the database on cookbook info view
@@ -395,44 +420,6 @@ async function addRecipe(recipe_name, cookbook_name, servings) {
     console.error('Error adding recipe:', error);
   }
   displayBlank();
-}
-
-//display a form to add a custom recipe
-
-function displayAddRecipeForm() {
-  let formHTML = `<h3>Add a Recipe</h3>`;
-  formHTML += `<form id="add-recipe-form">`;
-  formHTML += `<label for="recipe_name">Recipe Name:</label><br>`;
-  formHTML += `<input type="text" id="recipe_name" name="recipe_name"><br>`;
-  formHTML += `<br><label for="cookbook_name">Cookbook Name:</label><br>`;
-  formHTML += `<select id="cookbook_name" name="cookbook_name">`;
-  for(let i = 0; i < myCache.cookbookNames.length; i++) {
-      formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
-  }
-  formHTML += `</select><br>`;
-  formHTML += `<br><label for="servings">Number of Servings:</label><br>`;
-  formHTML += `<select id="servings" name="servings">`;
-  for(let i = 1; i <= 20; i++) {
-      formHTML += `<option value="${i}">${i}</option>`;
-  }
-  formHTML += `</select><br>`;
-  formHTML += `<br><input type="submit" value="Add Recipe">`;
-  formHTML += `</form>`;
-
-  let displayArea = document.getElementById('display-text');
-  displayArea.innerHTML = formHTML;
-
-  document.getElementById('add-recipe-form').addEventListener('submit', handleAddRecipeSubmit);
-}
-
-//handle submit on add cookbook form
-
-function handleAddRecipeSubmit(event) {
-  event.preventDefault();
-  let recipe_name = document.getElementById('recipe_name').value;
-  let cookbook_name = document.getElementById('cookbook_name').value;
-  let servings = parseInt(document.getElementById('servings').value, 10)
-  addRecipe(recipe_name, cookbook_name, servings);
 }
 
 //remove a recipe from the database on recipe info view
@@ -509,39 +496,6 @@ async function addIngredientRecipePairing(recipe_name, ingredient) {
   getRecipeInfo(recipe_name);
 }
 
-//display a form to add a custom ingredient
-function displayAddIngredientForm(recipe_name) {
-  let formHTML = `<h3>Add an Ingredient to <span id="recipe-name">${recipe_name}</span></h3>`;
-  formHTML += `<form id="add-ingredient-form">`;
-  formHTML += `<label for="ingredient-name">Ingredient:</label><br>`;
-  formHTML += `<input type="text" id="ingredient-name" name="ingredient-name"><br>`;
-  formHTML += `<br><input type="submit" value="Add Ingredient">`;
-  formHTML += `</form>`;
-
-  let displayArea = document.getElementById('display-text');
-  displayArea.innerHTML = formHTML;
-
-  document.getElementById('add-ingredient-form').addEventListener('submit', handleAddIngredientSubmit);
-}
-
-//handle submit on add ingredient form
-
-function handleAddIngredientSubmit(event) {
-  event.preventDefault();
-  let recipe_name = document.getElementById('recipe-name').innerText;
-  let ingredient_name = document.getElementById('ingredient-name').value;
-  addIngredient(recipe_name, ingredient_name);
-}
-
-//display ingredient name and a button to delete ingredient
-function displayIngredient(ingredient_name) {
-  let ingredientHTML = `<p>${ingredient_name}</p>`;
-  ingredientHTML += `<button onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
-
-  let displayArea = document.getElementById('display-text');
-  displayArea.innerHTML = ingredientHTML;
-}
-
 //remove an ingredient from the database on ingredient view
 async function deleteIngredient(ingredient_name) {
   console.log(`Trying to delete ingredient ${ingredient_name} from database through 'localhost:50051'`);
@@ -562,4 +516,64 @@ async function deleteIngredient(ingredient_name) {
     console.error('Error deleting ingredient:', error);
   }
   displayBlank();
+}
+
+
+
+//Event Handling Functions
+
+//handle submit on add cookbook form
+
+function handleAddCookbookSubmit(event) {
+  event.preventDefault();
+  let cookbook_name = document.getElementById('cookbook_name').value;
+  let isBook = document.querySelector('input[name="is_book"]:checked').value === 'yes';
+  let website = document.getElementById('website').value;
+  addCookbook(cookbook_name, isBook, website);
+}
+
+//handle submit on add cookbook form
+
+function handleAddRecipeSubmit(event) {
+  event.preventDefault();
+  let recipe_name = document.getElementById('recipe_name').value;
+  let cookbook_name = document.getElementById('cookbook_name').value;
+  let servings = parseInt(document.getElementById('servings').value, 10)
+  addRecipe(recipe_name, cookbook_name, servings);
+}
+
+//handle submit on add ingredient form
+
+function handleAddIngredientSubmit(event) {
+  event.preventDefault();
+  let recipe_name = document.getElementById('recipe-name').innerText;
+  let ingredient_name = document.getElementById('ingredient-name').value;
+  addIngredient(recipe_name, ingredient_name);
+}
+
+//function to assign recipe to day of the week in client-side object
+
+function assignRecipeToDay(event) {
+  event.preventDefault();
+
+  var recipe_name = document.getElementById('recipe-name').innerText;
+  var day_of_week = document.getElementById('day-of-week').value;
+
+  if (day_of_week == 'Monday') {
+    myMealPlan.setMonday(recipe_name);
+  } else if (day_of_week == 'Tuesday') {
+    myMealPlan.setTuesday(recipe_name);
+  } else if (day_of_week == 'Wednesday') {
+    myMealPlan.setWednesday(recipe_name);
+  } else if (day_of_week == 'Thursday') {
+    myMealPlan.setThursday(recipe_name);
+  } else if (day_of_week == 'Friday') {
+    myMealPlan.setFriday(recipe_name);
+  } else if (day_of_week == 'Saturday') {
+    myMealPlan.setSaturday(recipe_name);
+  } else if (day_of_week == 'Sunday') {
+    myMealPlan.setSunday(recipe_name);
+  }
+
+  refreshMealPlanTable();
 }
