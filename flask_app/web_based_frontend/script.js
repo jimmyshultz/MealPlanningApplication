@@ -97,31 +97,45 @@ getAllRecipeNames();
 // Display Functions
 
 // function to display all recipe names in browser
+
 function displayRecipeNames() {
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = ''; // Clear the display area
+
   let recipeNamesHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
   recipeNamesHTML += '<h5 class="card-title">Recipe Names</h5>';
-  recipeNamesHTML += '<ul class="list-group list-group-flush">';
+  recipeNamesHTML += '<ul class="list-group list-group-flush" id="recipe-list">';
   for (let i = 0; i < myCache.recipeNames.length; i++) {
-    recipeNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getRecipeInfo('${myCache.recipeNames[i]}')">${myCache.recipeNames[i]}</a></li>`;
+    recipeNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" data-recipe-name="${myCache.recipeNames[i]}">${myCache.recipeNames[i]}</a></li>`;
   }
   recipeNamesHTML += '</ul>';
-  recipeNamesHTML += `<button class="btn btn-primary mt-3" id="add-recipe" onclick="displayAddRecipeForm()">Add Recipe</button>`;
+  recipeNamesHTML += `<button class="btn btn-primary mt-3" id="add-recipe">Add Recipe</button>`;
   recipeNamesHTML += '</div></div></div>';
-  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeNamesHTML;
+
+  // Attach event listeners
+  document.getElementById('add-recipe').addEventListener('click', displayAddRecipeForm);
+  let recipeLinks = document.querySelectorAll('#recipe-list a');
+  recipeLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      getRecipeInfo(this.dataset.recipeName);
+    });
+  });
 }
 
 // function to display recipe info for selected recipe
+
 function displayRecipeInfo(data, recipe_name) {
   let recipeInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
   recipeInfoHTML += `<h5 class="card-title" id="recipe-name">${recipe_name}</h5>`;
   recipeInfoHTML += `<p class="card-text">${data.message}</p>`;
-  recipeInfoHTML += '<ul class="list-group list-group-flush mb-3">';
+  recipeInfoHTML += '<ul class="list-group list-group-flush mb-3" id="ingredient-list">';
   for (let i = 0; i < data.ingredients.length; i++) {
-    recipeInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="displayIngredient('${data.ingredients[i]}')">${data.ingredients[i]}</a></li>`;
+    recipeInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" data-ingredient="${data.ingredients[i]}">${data.ingredients[i]}</a></li>`;
   }
   recipeInfoHTML += '</ul>';
-  recipeInfoHTML += `<button class="btn btn-primary mb-3" id="add-ingredient" onclick="displayAddIngredientForm('${recipe_name}')">Add Ingredient</button>`;
+  recipeInfoHTML += `<button class="btn btn-primary mb-3" id="add-ingredient" data-recipe-name="${recipe_name}">Add Ingredient</button>`;
 
   // create a selector to assign recipe to a day of the week
   recipeInfoHTML += `<form id="meal-plan-assignment-form">`
@@ -137,13 +151,27 @@ function displayRecipeInfo(data, recipe_name) {
   recipeInfoHTML += `<option value="Sunday">Sunday</option>`
   recipeInfoHTML += `</select><button class="btn btn-secondary" type="submit">Assign</button></div></form>`
 
-  recipeInfoHTML += `<br><button class="btn btn-danger" id="delete-recipe" onclick="deleteRecipe('${recipe_name}')">Delete Recipe</button>`;
+  recipeInfoHTML += `<br><button class="btn btn-danger" id="delete-recipe" data-recipe-name="${recipe_name}">Delete Recipe</button>`;
   recipeInfoHTML += `</div></div></div>`;
 
   const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = recipeInfoHTML;
 
+  // Attach event listeners
+  document.getElementById('add-ingredient').addEventListener('click', function() {
+    displayAddIngredientForm(this.dataset.recipeName);
+  });
+  document.getElementById('delete-recipe').addEventListener('click', function() {
+    deleteRecipe(this.dataset.recipeName);
+  });
   document.getElementById('meal-plan-assignment-form').addEventListener('submit', assignRecipeToDay);
+  let ingredientLinks = document.querySelectorAll('#ingredient-list a');
+  ingredientLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      displayIngredient(this.dataset.ingredient);
+    });
+  });
 }
 
 // function to refresh html table displaying recipes and days of the week
@@ -174,35 +202,61 @@ function refreshMealPlanTable() {
 }
 
 // function to display cookbook names in browser
+
 function displayCookbookNames() {
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = ''; // Clear the display area
+
   let cookbookNamesHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
   cookbookNamesHTML += '<h5 class="card-title">Cookbook Names</h5>';
-  cookbookNamesHTML += '<ul class="list-group list-group-flush">';
+  cookbookNamesHTML += '<ul class="list-group list-group-flush" id="cookbook-list">';
   for (let i = 0; i < myCache.cookbookNames.length; i++) {
-    cookbookNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getCookbookInfo('${myCache.cookbookNames[i]}')">${myCache.cookbookNames[i]}</a></li>`;
+    cookbookNamesHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" data-cookbook-name="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</a></li>`;
   }
   cookbookNamesHTML += '</ul>';
-  cookbookNamesHTML += `<button class="btn btn-primary mt-3" id="add-cookbook" onclick="displayAddCookbookForm()">Add Cookbook</button>`;
+  cookbookNamesHTML += `<button class="btn btn-primary mt-3" id="add-cookbook">Add Cookbook</button>`;
   cookbookNamesHTML += '</div></div></div>';
-  const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = cookbookNamesHTML;
+
+  // Attach event listeners
+  document.getElementById('add-cookbook').addEventListener('click', displayAddCookbookForm);
+  let cookbookLinks = document.querySelectorAll('#cookbook-list a');
+  cookbookLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      getCookbookInfo(this.dataset.cookbookName);
+    });
+  });
 }
 
 // function to display cookbook info in browser
+
 function displayCookbookInfo(data, cookbook_name) {
   let cookbookInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
   cookbookInfoHTML += `<h5 class="card-title">${cookbook_name}</h5>`;
   cookbookInfoHTML += `<p class="card-text">${data.message}</p>`;
   cookbookInfoHTML += `<p class="card-text">Recipes: </p>`;
-  cookbookInfoHTML += '<ul class="list-group list-group-flush mb-3">';
+  cookbookInfoHTML += '<ul class="list-group list-group-flush mb-3" id="recipe-list">';
   for (let i = 0; i < data.recipes.length; i++) {
-    cookbookInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" onclick="getRecipeInfo('${data.recipes[i]}')">${data.recipes[i]}</a></li>`;
+    cookbookInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" data-recipe-name="${data.recipes[i]}">${data.recipes[i]}</a></li>`;
   }
   cookbookInfoHTML += '</ul>';
-  cookbookInfoHTML += `<button class="btn btn-danger" id="delete-cookbook" onclick="deleteCookbook('${cookbook_name}')">Delete Cookbook</button>`;
+  cookbookInfoHTML += `<button class="btn btn-danger" id="delete-cookbook" data-cookbook-name="${cookbook_name}">Delete Cookbook</button>`;
   cookbookInfoHTML += `</div></div></div>`;
   const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = cookbookInfoHTML;
+
+  // Attach event listeners
+  document.getElementById('delete-cookbook').addEventListener('click', function() {
+    deleteCookbook(this.dataset.cookbookName);
+  });
+  let recipeLinks = document.querySelectorAll('#recipe-list a');
+  recipeLinks.forEach(link => {
+    link.addEventListener('click', function(event) {
+      event.preventDefault();
+      getRecipeInfo(this.dataset.recipeName);
+    });
+  });
 }
 
 // function to return to blank display data
@@ -281,14 +335,20 @@ function displayAddIngredientForm(recipe_name) {
 }
 
 // display ingredient name and a button to delete ingredient
+
 function displayIngredient(ingredient_name) {
   let ingredientHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
   ingredientHTML += `<p class="card-text">${ingredient_name}</p>`;
-  ingredientHTML += `<button class="btn btn-danger" onclick="deleteIngredient('${ingredient_name}')">Delete Ingredient</button>`;
+  ingredientHTML += `<button class="btn btn-danger" id="delete-ingredient" data-ingredient-name="${ingredient_name}">Delete Ingredient</button>`;
   ingredientHTML += '</div></div></div>';
 
   const displayArea = document.getElementById('display-text');
   displayArea.innerHTML = ingredientHTML;
+
+  // Attach event listener
+  document.getElementById('delete-ingredient').addEventListener('click', function() {
+    deleteIngredient(this.dataset.ingredientName);
+  });
 }
 
 
@@ -339,7 +399,8 @@ async function getCookbookNames() {
 
 //function to get cookbook info for selected cookbook
 
-async function getCookbookInfo(cookbook_name) {
+async function getCookbookInfo(encoded_name) {
+  let cookbook_name = decodeURIComponent(encoded_name);
   console.log(`Trying to get cookbook info from 'localhost:50051' for ${cookbook_name}`);
   fetch(`http://localhost:50051/cookbook_info/${cookbook_name}`)
       .then(response => { return response.json() })
