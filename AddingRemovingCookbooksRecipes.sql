@@ -32,9 +32,6 @@ END $$
 
 DELIMITER ;
 
-CALL AddCookbook('Half Baked Harvest', false, 'https://www.halfbakedharvest.com/');
-CALL AddCookbook("Jimmy's Meals", true, null);
-
 -- Delete Cookbook
 
 DROP PROCEDURE IF EXISTS DeleteCookbook;
@@ -64,8 +61,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL DeleteCookbook("Billy's Burgers");
 
 -- Update Cookbook
 
@@ -104,8 +99,6 @@ END $$
 
 DELIMITER ;
 
-CALL UpdateCookbook('Half Baked Harvest', 'Half Baked Harvest - Mains', false, 'https://www.halfbakedharvest.com/category/recipes/type-of-meal/main-course/');
-
 -- Create Recipe
 
 DROP PROCEDURE IF EXISTS AddRecipe;
@@ -138,8 +131,6 @@ END $$
 
 DELIMITER ;
 
-CALL AddRecipe('Honey Lime Chili Chicken Bowls', 'Half Baked Harvest - Mains', 6);
-
 -- Delete Recipe
 
 DROP PROCEDURE IF EXISTS DeleteRecipe;
@@ -169,9 +160,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL DeleteRecipe("Honey Lime Chili Chicken Bowls");
-CALL AddRecipe('Honey Lime Chili Chicken Bowls', 'Half Baked Harvest - Mains', 6);
 
 -- Update Recipe
 
@@ -209,9 +197,6 @@ END $$
 
 DELIMITER ;
 
-CALL UpdateRecipe('Honey Lime Chili Chicken Bowls', 'Honey Lime Chili Chicken Bowl', 'Half Baked Harvest - Mains', 8);
-
-
 -- Create Ingredient
 
 DROP PROCEDURE IF EXISTS AddIngredient;
@@ -231,8 +216,8 @@ BEGIN
 
     -- If the ingredient does not exist, add it
     IF ingredientCount = 0 THEN
-        INSERT INTO Ingredients (IngredientName, IngredientType)
-        VALUES (myIngredient, NULL);
+        INSERT INTO Ingredients (IngredientName)
+        VALUES (myIngredient);
     ELSE
         -- Optionally handle the case where the ingredient already exists
         SIGNAL SQLSTATE '45000'
@@ -241,8 +226,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL AddIngredient('Flour');
 
 -- Delete Ingredient
 
@@ -273,9 +256,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL DeleteIngredient("Honey");
-CALL AddIngredient('Honey');
 
 -- Update Ingredient
 
@@ -308,8 +288,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL UpdateIngredient('Tyme', 'Thyme');
 
 -- add ingredient and recipe to meal relation together
 
@@ -353,9 +331,3 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-SELECT Id
-FROM Ingredients
-WHERE IngredientName = "Chicken";
-
-CALL AddIngredientRecipePairing("Chicken", "Honey Lime Chili Chicken Bowl");

@@ -1,3 +1,7 @@
+-- Stored Procedures to get information
+
+-- Get the ingredients in a meal
+
 DROP PROCEDURE IF EXISTS GetMealIngredients;
 
 DELIMITER $$
@@ -12,6 +16,8 @@ BEGIN
 END $$
 DELIMITER ;
 
+-- Get the name of all cookbooks in the database
+
 DROP PROCEDURE IF EXISTS GetAllCookbookNames;
 
 DELIMITER $$
@@ -23,6 +29,8 @@ BEGIN
   FROM Cookbook;
 END $$
 DELIMITER ;
+
+-- Get the information known about a cookbook
 
 DROP PROCEDURE IF EXISTS GetCookbookInfo;
 
@@ -37,7 +45,7 @@ BEGIN
 END $$
 DELIMITER ;
 
--- all recipe names
+-- Get all recipe names
 
 DROP PROCEDURE IF EXISTS GetAllRecipeNames;
 
@@ -51,7 +59,7 @@ BEGIN
 END $$
 DELIMITER ;
 
--- single cookbook recipe names
+-- Get recipes names from one cookbook
 
 DROP PROCEDURE IF EXISTS GetRecipesFromOneCookbook;
 
@@ -66,7 +74,7 @@ BEGIN
 END $$
 DELIMITER ;
 
--- single recipe info
+-- Get the information known about a recipe
 
 DROP PROCEDURE IF EXISTS GetRecipeInfo;
 
@@ -80,5 +88,3 @@ BEGIN
   WHERE RecipeName = myRecipeName;
 END $$
 DELIMITER ;
-
-CALL GetMealIngredients('Chicken Stew');

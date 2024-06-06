@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS MealPlanning;
 
 CREATE DATABASE MealPlanning;
@@ -23,7 +22,6 @@ FOREIGN KEY (CookbookName) REFERENCES Cookbook (CookbookName) on update cascade 
 CREATE TABLE IF NOT EXISTS Ingredients (
 Id int not null auto_increment,
 IngredientName varchar(100) not null,
-IngredientType varchar (100),
 PRIMARY KEY (Id)
 );
 
@@ -37,82 +35,141 @@ FOREIGN KEY (IngredientId) REFERENCES Ingredients (Id) on update cascade on dele
 
 -- Preliminary data
 
-INSERT INTO Cookbook (CookbookName, IsBook) VALUES ("Dude Diet", true);
-INSERT INTO Cookbook (CookbookName, IsBook) VALUES ("Dude Diet Dinner", true);
-INSERT INTO Cookbook (CookbookName, IsBook, Website) VALUES ("Domesticate Me", false, "http://domesticate-me.com");
+INSERT INTO Cookbook (CookbookName, IsBook) VALUES ("Easy Meals", true);
+INSERT INTO Cookbook (CookbookName, IsBook) VALUES ("Dinner Staples", true);
+INSERT INTO Cookbook (CookbookName, IsBook, Website) VALUES ("Half Baked Harvest - Mains", false, "https://www.halfbakedharvest.com/category/recipes/type-of-meal/main-course/");
+INSERT INTO Cookbook (CookbookName, IsBook, Website) VALUES ("Half Baked Harvest - Brunch", false, "https://www.halfbakedharvest.com/category/recipes/type-of-meal/brunch/");
 
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Fajitas", "Dude Diet", 6);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Stir Fry", "Dude Diet Dinner", 3);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Stuffing", "Domesticate Me", 8);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Chicken Stew", "Dude Diet", 4);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Macaroni & Cheese", "Easy Meals", 2);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Beans & Rice", "Easy Meals", 2);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Hamburgers", "Dinner Staples", 4);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Grilled Buffalo Ranch Chicken Tacos", "Half Baked Harvest - Mains", 6);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings) VALUES ("Blueberry Croissant French Toast Bake", "Half Baked Harvest - Brunch", 6);
 
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Red Pepper", "produce");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Green Pepper", "produce");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Yellow Onion", "produce");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Chicken", "meat");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Enchillada Sauce", "pantry");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Shredded Cheese", "dairy");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Garlic", "produce");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Soy Sauce", "condiment");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Butter", "dairy");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Sausage", "meat");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Golden Delicious Apple", "produce");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Tyme", "spice");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Chicken broth", "pantry");
-INSERT INTO Ingredients (IngredientName, IngredientType) VALUES ("Stale bread crumbs", "pantry");
+-- Macaroni and Cheese
+
+INSERT INTO Ingredients (IngredientName) VALUES ("Macaroni");
+INSERT INTO Ingredients (IngredientName) VALUES ("Butter");
+INSERT INTO Ingredients (IngredientName) VALUES ("Milk");
+INSERT INTO Ingredients (IngredientName) VALUES ("Cheese Powder");
+
+-- Beans and Rice
+
+INSERT INTO Ingredients (IngredientName) VALUES ("Black Beans");
+INSERT INTO Ingredients (IngredientName) VALUES ("White Rice");
+
+-- Hamburgers
+
+INSERT INTO Ingredients (IngredientName) VALUES ("Beef Patties");
+INSERT INTO Ingredients (IngredientName) VALUES ("Tomato");
+INSERT INTO Ingredients (IngredientName) VALUES ("Lettuce");
+INSERT INTO Ingredients (IngredientName) VALUES ("Hamburger Buns");
+INSERT INTO Ingredients (IngredientName) VALUES ("Ketchup");
+INSERT INTO Ingredients (IngredientName) VALUES ("Mustard");
+INSERT INTO Ingredients (IngredientName) VALUES ("Pickles");
+INSERT INTO Ingredients (IngredientName) VALUES ("Onion");
+
+-- Grilled Buffalo Chicken Ranch Tacos
+
+INSERT INTO Ingredients (IngredientName) VALUES ("Chicken Thighs");
+INSERT INTO Ingredients (IngredientName) VALUES ("Seasoned Salt");
+INSERT INTO Ingredients (IngredientName) VALUES ("Chipotle Chili Powder");
+INSERT INTO Ingredients (IngredientName) VALUES ("Buffalo Sauce");
+INSERT INTO Ingredients (IngredientName) VALUES ("Hard Shell Tacos");
+INSERT INTO Ingredients (IngredientName) VALUES ("Shredded Mexican Cheese Blend");
+INSERT INTO Ingredients (IngredientName) VALUES ("Shredded Lettuce");
+INSERT INTO Ingredients (IngredientName) VALUES ("Cilantro");
+INSERT INTO Ingredients (IngredientName) VALUES ("Green Onion");
+INSERT INTO Ingredients (IngredientName) VALUES ("Avacado");
+INSERT INTO Ingredients (IngredientName) VALUES ("Sour Cream");
+INSERT INTO Ingredients (IngredientName) VALUES ("Mayo");
+INSERT INTO Ingredients (IngredientName) VALUES ("Buttermilk");
+INSERT INTO Ingredients (IngredientName) VALUES ("Dried Parsley");
+INSERT INTO Ingredients (IngredientName) VALUES ("Dried Dill");
+INSERT INTO Ingredients (IngredientName) VALUES ("Garlic Powder");
+INSERT INTO Ingredients (IngredientName) VALUES ("Onion Powder");
+INSERT INTO Ingredients (IngredientName) VALUES ("Pickled Jalapenos");
+INSERT INTO Ingredients (IngredientName) VALUES ("Chives");
+
+-- Blueberry Croissant French Toast Bake
+
+INSERT INTO Ingredients (IngredientName) VALUES ("Eggs");
+INSERT INTO Ingredients (IngredientName) VALUES ("Maple Syrup");
+INSERT INTO Ingredients (IngredientName) VALUES ("Orange Zest");
+INSERT INTO Ingredients (IngredientName) VALUES ("Grand Marnier");
+INSERT INTO Ingredients (IngredientName) VALUES ("Vanilla Extract");
+INSERT INTO Ingredients (IngredientName) VALUES ("Cinnamon");
+INSERT INTO Ingredients (IngredientName) VALUES ("Salt");
+INSERT INTO Ingredients (IngredientName) VALUES ("Croissants");
+INSERT INTO Ingredients (IngredientName) VALUES ("Blueberry Jam");
+INSERT INTO Ingredients (IngredientName) VALUES ("Ricotta Cheese");
+INSERT INTO Ingredients (IngredientName) VALUES ("Blueberries");
 
 SELECT * FROM INGREDIENTS;
 
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 1);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 2);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 3);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 4);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 5);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Fajitas", 6);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 1);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 2);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 3);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 4);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 7);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 8);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stir Fry", 9);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing",3 );
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing", 10);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing", 11);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing", 12);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing", 13);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Stuffing", 14);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Chicken Stew", 1);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Chicken Stew", 4);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Chicken Stew", 14);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Chicken Stew", 13);
-INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Chicken Stew", 3);
+
+-- Macaroni & Cheese
+
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Macaroni & Cheese", 1);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Macaroni & Cheese", 2);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Macaroni & Cheese", 3);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Macaroni & Cheese", 4);
+
+-- Beans & Rice
+
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Beans & Rice", 5);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Beans & Rice", 6);
+
+-- Hamburgers
+
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 7);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 8);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 9);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 10);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 11);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 12);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 13);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Hamburgers", 14);
+
+-- Grilled Buffalo Ranch Chicken Tacos
+
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 15);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 16);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 17);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 18);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 19);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 20);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 21);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 22);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 23);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 24);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 25);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 26);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 27);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 28);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 29);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 30);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 31);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 32);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", 33);
+
+-- Blueberry Croissant
+
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 34);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 3);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 35);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 36);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 37);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 38);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 39);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 40);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 41);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 42);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 43);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 2);
+INSERT INTO Meal (RecipeName, IngredientId) VALUES ("Blueberry Croissant French Toast Bake", 44);
 
 SELECT * FROM Cookbook;
 SELECT * FROM Recipe;
 SELECT * FROM Ingredients;
 SELECT * FROM Meal;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
