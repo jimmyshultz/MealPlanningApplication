@@ -1,0 +1,10 @@
+USE MealPlanning;
+
+CREATE TABLE IF NOT EXISTS Users (
+UserId INT auto_increment NOT NULL,
+Username VARCHAR(30) NOT NULL UNIQUE,
+Email VARCHAR(100) NOT NULL UNIQUE,
+PasswordHash VARCHAR(255),
+FirstName VARCHAR(50),
+LastName VARCHAR(50)
+);

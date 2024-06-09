@@ -351,6 +351,60 @@ function displayIngredient(ingredient_name) {
   });
 }
 
+// display a page to register a new user
+
+function displayRegisterForm() {
+  let formHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  formHTML += '<h5 class="card-title">Register</h5>';
+  formHTML += '<form id="register-form" class="mb-3">';
+  formHTML += '<div class="mb-3"><label for="email" class="form-label">Email:</label>';
+  formHTML += '<input type="email" class="form-control" id="email" name="email"></div>';
+  formHTML += '<div class="mb-3"><label for="password" class="form-label">Password:</label>';
+  formHTML += '<input type="password" class="form-control" id="password" name="password"></div>';
+  formHTML += '<div class="mb-3"><label for="first_name" class="form-label">First Name:</label>';
+  formHTML += '<input type="text" class="form-control" id="first_name" name="first_name"></div>';
+  formHTML += '<div class="mb-3"><label for="last_name" class="form-label">Last Name:</label>';
+  formHTML += '<input type="text" class="form-control" id="last_name" name="last_name"></div>';
+  formHTML += '<button type="submit" class="btn btn-primary">Register</button></form>';
+  formHTML += '</div></div></div>';
+
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('register-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    let firstName = document.getElementById('first_name').value;
+    let lastName = document.getElementById('last_name').value;
+    addUser(email, password, firstName, lastName);
+  });
+}
+
+// display a page to login
+
+function displayLoginForm() {
+  let formHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  formHTML += '<h5 class="card-title">Login</h5>';
+  formHTML += '<form id="login-form" class="mb-3">';
+  formHTML += '<div class="mb-3"><label for="email" class="form-label">Email:</label>';
+  formHTML += '<input type="email" class="form-control" id="email" name="email"></div>';
+  formHTML += '<div class="mb-3"><label for="password" class="form-label">Password:</label>';
+  formHTML += '<input type="password" class="form-control" id="password" name="password"></div>';
+  formHTML += '<button type="submit" class="btn btn-primary">Login</button></form>';
+  formHTML += '</div></div></div>';
+
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = formHTML;
+
+  document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
+    login(email, password);
+  });
+
+}
 
 
 //Server Communication Functions
@@ -583,6 +637,74 @@ async function deleteIngredient(ingredient_name) {
   displayBlank();
 }
 
+//add user to database
+async function addUser(email, password, firstName, lastName) {
+  console.log("Trying to add user to database through 'localhost:50051'");
+  let new_user_info = {
+                       email: email,
+                       password: password,
+                       first_name: firstName,
+                       last_name: lastName
+                      };
+  
+  try {
+    const response = await fetch(`${serverDomain}/add_user`, {
+      method: 'PUT', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(new_user_info)
+    });
+  
+    const data = await response.json()
+    console.log(data);
+
+    if (data.success) {
+      displayBlank();
+    } else {
+      console.log(data.success);
+      alert("User already exists. Please try again.");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    }
+  
+  } catch (error) {
+    console.error('Error adding user:', error);
+  }
+}
+
+//login user
+async function login(email, password) {
+  console.log("Trying to login user through 'localhost:50051'");
+  let user_info = {
+                  email: email,
+                  password: password
+                  };
+  
+  try {
+    const response = await fetch(`${serverDomain}/login`, {
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(user_info)
+    });
+  
+    const data = await response.json()
+    console.log(data);
+
+    if (data.success) {
+      alert(`Login with ${email} successful!`)
+      displayBlank();
+    } else {
+      console.log(data.success);
+      alert("Invalid login. Please try again.");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    }
+  
+  } catch (error) {
+    console.error('Error logging in:', error);
+  }
+}
 
 
 //Event Handling Functions

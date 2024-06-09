@@ -16,6 +16,7 @@ import sys
 from mysql.connector import errorcode
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS, cross_origin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class DAL:
     """
@@ -614,6 +615,81 @@ class DAL:
             if connector and connector.is_connected():
                 connector.close()
                 print("MySQL connection is closed.")
+
+    def add_user(self, email, password, first_name, last_name):
+        """
+        Adds a new user to the database.
+    
+        Parameters:
+        - email (str): The email of the new user.
+        - password (str): The password of the new user.
+        - first_name (str): The first name of the new user.
+        - last_name (str): The last name of the new user.
+    
+        Outputs:
+        - str: A success message if the user is added successfully.
+        - str: An error message if an error occurs.
+        """
+        try:
+            connector = mysql.connector.connect(user=self.dbuser_name, 
+                                                password=self.dbpassword,
+                                                host=self.host,
+                                                database=self.database)
+            cursor = connector.cursor()
+            cursor.callproc("AddUser", [email, password, first_name, last_name])
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                return "Something is wrong with your user name or password"
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                return "Database does not exist"
+            elif err.sqlstate == '45000':
+                return f"Error: {err.msg}"
+            else:
+                return err
+        else:
+            connector.commit()
+            return f"User '{email}' added successfully."
+        finally:
+            if cursor:
+                cursor.close()
+            if connector and connector.is_connected():
+                connector.close()
+                print("MySQL connection is closed.")
+
+    def get_user_password(self, email):
+        """
+        Retrieves the password of a user from the database.
+    
+        Parameters:
+        - email (str): The email of the user whose password is to be retrieved.
+    
+        Returns:
+        - str: The password of the user if successful.
+        - str: An error message if an error occurs.
+        """
+        try:
+            user_password = ""
+            connector = mysql.connector.connect(user=self.dbuser_name, 
+                                                password=self.dbpassword,
+                                                host=self.host,
+                                                database=self.database)
+            
+            cursor = connector.cursor()
+            cursor.callproc("GetUserPassword", [email])
+            for x in cursor.stored_results():
+                user_password = x.fetchone()[0]
+    
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                return "Something is wrong with your user name or password"
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                return "Database does not exist"
+            else:
+                return err
+        
+        else:
+            connector.close()
+            return user_password
         
 class BusinessLogic:
     """
@@ -908,6 +984,69 @@ class BusinessLogic:
             self.dal.add_ingredient_recipe_pairing(ingredient_name, recipe_name)
             response_dict = { 'message': f'Ingredient {ingredient_name} paired with recipe {recipe_name} successfully'}
             return jsonify(response_dict), 200
+        
+        @self.app.route('/add_user', methods=['PUT'])
+        def add_user():
+            """
+            This method adds a new user to the database.
+        
+            Parameters:
+            - JSON request data with keys 'username', 'email', 'password', 
+              'first_name', and 'last_name'.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the 
+              success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            data = request.json
+            email = data['email']
+            password = data['password']
+            first_name = data['first_name']
+            last_name = data['last_name']
+
+            #Hash the password
+            hashed_password = generate_password_hash(password)
+
+            #Call the DAL method to add the user
+            result = self.dal.add_user(email, hashed_password, first_name, last_name)
+            print(result)
+
+            #Check the result and return the appropriate response
+            if result == "Something is wrong with your user name or password" or result == "Database does not exist" or result == "Error: User already exists":
+                response_dict = { 'message': f"Error: {result}", 'success': False}
+                return jsonify(response_dict), 400
+            else:
+                response_dict = { 'message': f'User {email} added successfully', 'success': True}
+                return jsonify(response_dict), 200
+            
+        @self.app.route('/login', methods=['POST'])
+        def login():
+            """
+            This method logs a user into the application.
+        
+            Parameters:
+            - JSON request data with keys 'email' and 'password'.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the 
+              success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            data = request.json
+            email = data['email']
+            password = data['password']
+
+            #Get the hashed password from the database
+            hashed_password = self.dal.get_user_password(email)
+
+            #Check if the password is correct
+            if check_password_hash(hashed_password, password):
+                response_dict = { 'message': f'User {email} logged in successfully', 'success': True}
+                return jsonify(response_dict), 200
+            else:
+                response_dict = { 'message': 'Error: Incorrect password', 'success': False}
+                return jsonify(response_dict), 400
             
     def run(self):
         """
