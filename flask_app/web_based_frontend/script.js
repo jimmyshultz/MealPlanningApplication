@@ -406,6 +406,10 @@ function displayLoginForm() {
 
 }
 
+function displayEmailInNav(email) {
+  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="#">Hello, ${email}</a></li></ul>`;
+  document.getElementById('nav-user-section').innerHTML = userSectionHTML;
+}
 
 //Server Communication Functions
 
@@ -691,7 +695,8 @@ async function login(email, password) {
     console.log(data);
 
     if (data.success) {
-      alert(`Login with ${email} successful!`)
+      alert(`Login with ${email} successful!`);
+      displayEmailInNav(email);
       displayBlank();
     } else {
       console.log(data.success);

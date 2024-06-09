@@ -13,8 +13,9 @@ The file is designed to by run through the frontend that imports it.
 
 import mysql.connector
 import sys
+import os
 from mysql.connector import errorcode
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, session
 from flask_cors import CORS, cross_origin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -42,6 +43,10 @@ class DAL:
     - add ingredient
     - delete ingredient
     - update ingredient
+    - add ingredient recipe pairing
+    - add user
+    - get user password
+    - get user info
     """
     def __init__(self, p_user_name, p_dbpassword):
         self.dbuser_name = p_user_name
@@ -691,6 +696,41 @@ class DAL:
             connector.close()
             return user_password
         
+    def get_user_info(self, email):
+        """
+        Retrieves information about a user from the database.
+    
+        Parameters:
+        - email (str): The email of the user whose information is to be retrieved.
+    
+        Returns:
+        - tuple: A tuple containing the information about the user if successful.
+        - str: An error message if an error occurs.
+        """
+        try:
+            user_info = ()
+            connector = mysql.connector.connect(user=self.dbuser_name, 
+                                                password=self.dbpassword,
+                                                host=self.host,
+                                                database=self.database)
+            
+            cursor = connector.cursor()
+            cursor.callproc("GetUserInfo", [email])
+            for x in cursor.stored_results():
+                user_info = x.fetchone()
+    
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                return "Something is wrong with your user name or password"
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                return "Database does not exist"
+            else:
+                return err
+        
+        else:
+            connector.close()
+            return user_info
+        
 class BusinessLogic:
     """
     An object to interface between the Data Access Layer (DAL) and the client, providing the necessary 
@@ -711,6 +751,11 @@ class BusinessLogic:
         - delete_cookbook: Deletes a cookbook from the database.
         - add_recipe: Adds a new recipe to the database.
         - delete_recipe: Deletes a recipe from the database.
+        - add_ingredient: Adds a new ingredient to the database.
+        - delete_ingredient: Deletes an ingredient from the database.
+        - add_ingredient_recipe_pairing: Adds a new ingredient-recipe pairing to the database.
+        - add_user: Adds a new user to the database.
+        - login_user: Logs a user into the application.
     - run: Starts the Flask application.
     """
     def __init__(self, p_dal):
@@ -723,6 +768,7 @@ class BusinessLogic:
 
         self.app.debug = True
         self.cors.init_app(self.app)
+        self.app.secret_key = os.environ.get('SECRET_KEY')
 
         @self.app.route('/check_recipe/<p_recipe>')
         def check_recipe(p_recipe):
@@ -1037,12 +1083,18 @@ class BusinessLogic:
             email = data['email']
             password = data['password']
 
-            #Get the hashed password from the database
-            hashed_password = self.dal.get_user_password(email)
-
-            #Check if the password is correct
+            # Get the hashed password from the database
+            user_info = self.dal.get_user_info(email)  # Replace with your own function
+            hashed_password = user_info[2]
+        
+            # Check if the password is correct
             if check_password_hash(hashed_password, password):
-                response_dict = { 'message': f'User {email} logged in successfully', 'success': True}
+                # Store the user's id in the session
+                session['user_id'] = user_info[0]
+                print(session['user_id'])
+        
+                response_dict = {'message': f'User {email} logged in successfully', 
+                                 'success': True}
                 return jsonify(response_dict), 200
             else:
                 response_dict = { 'message': 'Error: Incorrect password', 'success': False}

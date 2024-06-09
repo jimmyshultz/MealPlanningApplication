@@ -114,3 +114,36 @@ END $$
 DELIMITER ;
 
 CALL GetUserPassword('test@test.com');
+
+-- Get the User's hashed password
+
+DROP PROCEDURE IF EXISTS GetUserInfo;
+
+DELIMITER $$
+
+CREATE PROCEDURE GetUserInfo (
+    myEmail VARCHAR(100)
+)
+BEGIN
+    DECLARE userCount INT;
+
+    -- Check if the user exists
+    SELECT COUNT(*) INTO userCount
+    FROM Users
+    WHERE Email = myEmail;
+
+    -- If the user exists return all info
+    IF userCount > 0 THEN
+        SELECT *
+        FROM Users
+        WHERE Email = myEmail;
+    ELSE
+        -- Optionally handle the case where the user does not exist
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'User does not exist';
+    END IF;
+END $$
+
+DELIMITER ;
+
+CALL GetUserInfo('test@test.com');
