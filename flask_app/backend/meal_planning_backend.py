@@ -1124,6 +1124,22 @@ class BusinessLogic:
                 response_dict = { 'message': 'Error: Incorrect password', 'success': False}
                 return jsonify(response_dict), 400
             
+        @self.app.route('/logout', methods=['POST'])
+        def logout():
+            """
+            This method logs a user out of the application.
+        
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the 
+              success of the operation.
+            - HTTP status code: 200 on success.
+            """
+            # Remove the user's id from the session
+            session.pop('user_id', None)
+        
+            response_dict = {'message': 'User logged out successfully', 'success': True}
+            return jsonify(response_dict), 200
+            
     def run(self):
         """
         This method starts the Flask application on the local machine.

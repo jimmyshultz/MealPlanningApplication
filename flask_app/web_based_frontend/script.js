@@ -9,6 +9,11 @@ class Cache {
   }
 }
 
+function clearCache() {
+  myCache.cookbookNames = [];
+  myCache.recipeNames = [];
+}
+
 //object to hold the string of a recipe name for each day of the week
 
 /**
@@ -405,8 +410,16 @@ function displayLoginForm() {
 }
 
 function displayEmailInNav(email) {
-  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="#">Hello, ${email}</a></li></ul>`;
+  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="#">Hello, ${email}</a></li>`;
+  userSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="logout" onclick="logout();">Logout</a></li></ul>`;
   document.getElementById('nav-user-section').innerHTML = userSectionHTML;
+}
+
+function displayLoggedOutNav () {
+  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="register" onclick="displayRegisterForm();">Register</a></li>`;
+  userSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="login" onclick="displayLoginForm();">Login</a></li></ul>`;
+  document.getElementById('nav-user-section').innerHTML = userSectionHTML;
+
 }
 
 //Server Communication Functions
@@ -717,6 +730,38 @@ async function login(email, password) {
   
   } catch (error) {
     console.error('Error logging in:', error);
+  }
+}
+
+//logout user
+async function logout() {
+  console.log("Trying to logout user through 'localhost:50051'");
+  
+  try {
+    const response = await fetch(`${serverDomain}/logout`, {
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
+  
+    const data = await response.json()
+    console.log(data);
+
+    if (data.success) {
+      alert(`Logout successful!`);
+      displayLoggedOutNav();
+      clearCache();
+      displayBlank();
+    } else {
+      console.log(data.success);
+      alert("Logout failed. Please try again.");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    }
+  
+  } catch (error) {
+    console.error('Error logging out:', error);
   }
 }
 
