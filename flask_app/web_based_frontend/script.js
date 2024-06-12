@@ -87,8 +87,6 @@ class WeeklyMealPlan {
 let myMealPlan = new WeeklyMealPlan();
 let myCache = new Cache();
 let serverDomain = 'http://localhost:50051'
-getCookbookNames();
-getAllRecipeNames();
 
 
 
@@ -421,7 +419,7 @@ function displayEmailInNav(email) {
  */
 async function getAllRecipeNames() {
   console.log("Trying to get recipe names from 'localhost:50051'");
-  fetch(`http://localhost:50051/all_recipe_names`)
+  fetch(`${serverDomain}/all_recipe_names`, {credentials: 'include'})
       .then(response => { return response.json() })
       .then(data => { 
             console.log("Data from server:", data);
@@ -434,7 +432,7 @@ async function getAllRecipeNames() {
 
 async function getRecipeInfo(recipe_name) {
   console.log(`Trying to get recipe info from 'localhost:50051' for ${recipe_name}`);
-  fetch(`http://localhost:50051/recipe_info/${recipe_name}`)
+  fetch(`${serverDomain}/recipe_info/${recipe_name}`, {credentials: 'include'})
       .then(response => { return response.json() })
       .then(data => { 
             displayRecipeInfo(data, recipe_name);
@@ -446,7 +444,7 @@ async function getRecipeInfo(recipe_name) {
 
 async function getCookbookNames() {
   console.log("Trying to get cookbook names from 'localhost:50051'");
-  fetch(`http://localhost:50051/cookbook_names`)
+  fetch(`${serverDomain}/cookbook_names`, {method: 'GET', credentials: 'include'})
       .then(response => { return response.json() })
       .then(data => { 
             console.log("Data from server:", data);
@@ -460,7 +458,7 @@ async function getCookbookNames() {
 async function getCookbookInfo(encoded_name) {
   let cookbook_name = decodeURIComponent(encoded_name);
   console.log(`Trying to get cookbook info from 'localhost:50051' for ${cookbook_name}`);
-  fetch(`http://localhost:50051/cookbook_info/${cookbook_name}`)
+  fetch(`${serverDomain}/cookbook_info/${cookbook_name}`, {credentials: 'include'})
       .then(response => { return response.json() })
       .then(data => { 
             displayCookbookInfo(data, cookbook_name);
@@ -478,7 +476,8 @@ async function addCookbook(cookbook_name, isBook, website) {
     const response = await fetch(`${serverDomain}/add_cookbook`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(new_cookbook_info)
+      body: JSON.stringify(new_cookbook_info),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -502,7 +501,8 @@ async function deleteCookbook(cookbook_name) {
   try {
     const response = await fetch(`${serverDomain}/delete_cookbook/${cookbook_name}`, {
       method: 'DELETE', 
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -529,7 +529,8 @@ async function addRecipe(recipe_name, cookbook_name, servings) {
     const response = await fetch(`${serverDomain}/add_recipe`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(new_recipe_info)
+      body: JSON.stringify(new_recipe_info),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -553,7 +554,8 @@ async function deleteRecipe(recipe_name) {
   try {
     const response = await fetch(`${serverDomain}/delete_recipe/${recipe_name}`, {
       method: 'DELETE', 
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -579,7 +581,8 @@ async function addIngredient(recipe_name, ingredient) {
     const response = await fetch(`${serverDomain}/add_ingredient`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(new_ingredient_info)
+      body: JSON.stringify(new_ingredient_info),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -604,7 +607,8 @@ async function addIngredientRecipePairing(recipe_name, ingredient) {
     const response = await fetch(`${serverDomain}/add_ingredient_recipe_pairing`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(new_ingredient_info)
+      body: JSON.stringify(new_ingredient_info),
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -626,7 +630,8 @@ async function deleteIngredient(ingredient_name) {
   try {
     const response = await fetch(`${serverDomain}/delete_ingredient/${ingredient_name}`, {
       method: 'DELETE', 
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
     });
 
     if (!response.ok) {
@@ -655,7 +660,8 @@ async function addUser(email, password, firstName, lastName) {
     const response = await fetch(`${serverDomain}/add_user`, {
       method: 'PUT', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(new_user_info)
+      body: JSON.stringify(new_user_info),
+      credentials: 'include'
     });
   
     const data = await response.json()
@@ -688,7 +694,8 @@ async function login(email, password) {
     const response = await fetch(`${serverDomain}/login`, {
       method: 'POST', 
       headers: { 'Content-Type': 'application/json' }, 
-      body: JSON.stringify(user_info)
+      body: JSON.stringify(user_info),
+      credentials: 'include'
     });
   
     const data = await response.json()
@@ -697,6 +704,8 @@ async function login(email, password) {
     if (data.success) {
       alert(`Login with ${email} successful!`);
       displayEmailInNav(email);
+      getCookbookNames();
+      getAllRecipeNames();
       displayBlank();
     } else {
       console.log(data.success);

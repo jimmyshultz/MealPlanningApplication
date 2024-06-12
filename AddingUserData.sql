@@ -1,20 +1,5 @@
 USE MealPlanning;
 
-CREATE TABLE IF NOT EXISTS Users (
-UserId INT auto_increment NOT NULL,
-Email VARCHAR(100) NOT NULL UNIQUE,
-PasswordHash VARCHAR(255),
-FirstName VARCHAR(50),
-LastName VARCHAR(50),
-GoogleId VARCHAR(100) UNIQUE,
-FacebookId VARCHAR(100) UNIQUE,
-PRIMARY KEY (UserId)
-);
-
-INSERT INTO Users (Email, PasswordHash, FirstName, LastName) VALUES ("jimmy@shultz-kc.com", "greeneighty", "Jimmy", "Shultz");
-
-SELECT * FROM Users;
-
 -- Add User
 
 DROP PROCEDURE IF EXISTS AddUser;
@@ -48,8 +33,6 @@ END $$
 
 DELIMITER ;
 
-CALL AddUser("jimmy2@shultz-kc.com", "omahaomaha", "Jimmy", "Shultz");
-
 -- Delete User
 
 DROP PROCEDURE IF EXISTS DeleteUser;
@@ -79,8 +62,6 @@ BEGIN
 END $$
 
 DELIMITER ;
-
-CALL DeleteUser("jimmy2@shultz-kc.com");
 
 -- Get the User's hashed password
 
@@ -113,9 +94,7 @@ END $$
 
 DELIMITER ;
 
-CALL GetUserPassword('test@test.com');
-
--- Get the User's hashed password
+-- Get the info for the user
 
 DROP PROCEDURE IF EXISTS GetUserInfo;
 
@@ -146,4 +125,4 @@ END $$
 
 DELIMITER ;
 
-CALL GetUserInfo('test@test.com');
+-- 

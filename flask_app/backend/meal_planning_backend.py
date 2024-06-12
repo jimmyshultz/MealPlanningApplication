@@ -54,7 +54,7 @@ class DAL:
         self.host = "127.0.0.1"
         self.database = "MealPlanning"
 
-    def get_cookbook_names(self):
+    def get_cookbook_names(self, user_id):
         """
         Retrieves the names of all cookbooks from the database.
 
@@ -70,7 +70,7 @@ class DAL:
                                                 database=self.database)
             
             cursor = connector.cursor()
-            cursor.callproc("GetAllCookbookNames")
+            cursor.callproc("GetAllCookbookNames", [user_id])
             for x in cursor.stored_results():
                 for item in x.fetchall():
                     cookbook_names.append(item[0])
@@ -87,7 +87,7 @@ class DAL:
             connector.close()
             return cookbook_names
     
-    def get_cookbook_info(self, cookbook_name):
+    def get_cookbook_info(self, cookbook_name, user_id):
         """
         Retrieves information about a cookbook from the database.
 
@@ -108,7 +108,7 @@ class DAL:
                                                 database=self.database)
             
             cursor = connector.cursor()
-            cursor.callproc("GetCookbookInfo", [cookbook_name])
+            cursor.callproc("GetCookbookInfo", [cookbook_name, user_id])
             for x in cursor.stored_results():
                 cookbook_info = x.fetchone()
     
@@ -124,7 +124,7 @@ class DAL:
             connector.close()
             return cookbook_info
         
-    def add_cookbook(self, cookbook_name, is_book, website=None):
+    def add_cookbook(self, cookbook_name, is_book, user_id, website=None):
         """
         Adds a new cookbook to the database.
     
@@ -141,7 +141,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("AddCookbook", [cookbook_name, is_book, website])
+            cursor.callproc("AddCookbook", [cookbook_name, is_book, website, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -161,7 +161,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def delete_cookbook(self, cookbook_name):
+    def delete_cookbook(self, cookbook_name, user_id):
         """
         Deletes a cookbook from the database.
     
@@ -178,7 +178,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("DeleteCookbook", [cookbook_name])
+            cursor.callproc("DeleteCookbook", [cookbook_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -198,7 +198,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def update_cookbook(self, current_cookbook_name, new_cookbook_name, new_is_book, new_website=None):
+    def update_cookbook(self, current_cookbook_name, new_cookbook_name, new_is_book, user_id, new_website=None):
         """
         Updates the name of a cookbook in the database.
 
@@ -220,7 +220,7 @@ class DAL:
             cursor = connector.cursor()
             cursor.callproc("UpdateCookbook", [current_cookbook_name, 
                                             new_cookbook_name, new_is_book, 
-                                            new_website])
+                                            new_website, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -240,7 +240,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def get_recipe_names(self, cookbook_name=""):
+    def get_recipe_names(self, user_id, cookbook_name=""):
         """
         Retrieves the names of all recipes from a specified cookbook.
     
@@ -260,12 +260,12 @@ class DAL:
             
             cursor = connector.cursor()
             if cookbook_name == "":
-                cursor.callproc("GetAllRecipeNames")
+                cursor.callproc("GetAllRecipeNames", [user_id])
                 for x in cursor.stored_results():
                     for item in x.fetchall():
                         recipe_names.append(item[0])
             else:
-                cursor.callproc("GetRecipesFromOneCookbook", [cookbook_name])
+                cursor.callproc("GetRecipesFromOneCookbook", [cookbook_name, user_id])
                 for x in cursor.stored_results():
                     for item in x.fetchall():
                         recipe_names.append(item[0])
@@ -282,7 +282,7 @@ class DAL:
             connector.close()
             return recipe_names
     
-    def get_recipe_info(self, recipe_name):
+    def get_recipe_info(self, recipe_name, user_id):
         """
         Retrieves information about a specific recipe.
     
@@ -301,7 +301,7 @@ class DAL:
                                                 database=self.database)
             
             cursor = connector.cursor()
-            cursor.callproc("GetRecipeInfo", [recipe_name])
+            cursor.callproc("GetRecipeInfo", [recipe_name, user_id])
             for x in cursor.stored_results():
                 recipe_info = x.fetchone()
     
@@ -317,7 +317,7 @@ class DAL:
             connector.close()
             return recipe_info
         
-    def get_recipe_ingredients(self, recipe_name):
+    def get_recipe_ingredients(self, recipe_name, user_id):
         """
         Retrieves the ingredients of a specific recipe.
     
@@ -336,7 +336,7 @@ class DAL:
                                                 database=self.database)
             
             cursor = connector.cursor()
-            cursor.callproc("GetMealIngredients", [recipe_name])
+            cursor.callproc("GetMealIngredients", [recipe_name, user_id])
             for x in cursor.stored_results():
                 for item in x.fetchall():
                     recipe_ingredients.append(item[0])
@@ -353,7 +353,7 @@ class DAL:
             connector.close()
             return recipe_ingredients
         
-    def add_recipe(self, recipe_name, cookbook_name, servings):
+    def add_recipe(self, recipe_name, cookbook_name, servings, user_id):
         """
         Adds a new recipe to the database.
     
@@ -370,7 +370,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("AddRecipe", [recipe_name, cookbook_name, servings])
+            cursor.callproc("AddRecipe", [recipe_name, cookbook_name, servings, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -390,7 +390,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
     
-    def delete_recipe(self, recipe_name):
+    def delete_recipe(self, recipe_name, user_id):
         """
         Deletes a recipe from the database.
     
@@ -407,7 +407,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("DeleteRecipe", [recipe_name])
+            cursor.callproc("DeleteRecipe", [recipe_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -427,7 +427,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
     
-    def update_recipe(self, current_recipe_name, new_recipe_name, new_cookbook_name, new_servings):
+    def update_recipe(self, current_recipe_name, new_recipe_name, new_cookbook_name, new_servings, user_id):
         """
         Updates the name of a recipe in the database.
 
@@ -449,7 +449,7 @@ class DAL:
             cursor = connector.cursor()
             cursor.callproc("UpdateRecipe", [current_recipe_name, 
                                              new_recipe_name, 
-                                             new_cookbook_name, new_servings])
+                                             new_cookbook_name, new_servings, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -469,7 +469,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def add_ingredient(self, ingredient_name):
+    def add_ingredient(self, ingredient_name, user_id):
         """
         Adds a new ingredient to the database.
     
@@ -487,7 +487,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("AddIngredient", [ingredient_name])
+            cursor.callproc("AddIngredient", [ingredient_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -507,7 +507,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def delete_ingredient(self, ingredient_name):
+    def delete_ingredient(self, ingredient_name, user_id):
         """
         Deletes an ingredient from the database.
     
@@ -524,7 +524,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("DeleteIngredient", [ingredient_name])
+            cursor.callproc("DeleteIngredient", [ingredient_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -544,7 +544,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
         
-    def update_ingredient(self, current_ingredient_name, new_ingredient_name):
+    def update_ingredient(self, current_ingredient_name, new_ingredient_name, user_id):
         """
         Updates the name of an ingredient in the database.
     
@@ -563,7 +563,7 @@ class DAL:
                                                 database=self.database)
             cursor = connector.cursor()
             cursor.callproc("UpdateIngredient", [current_ingredient_name, 
-                                                 new_ingredient_name])
+                                                 new_ingredient_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -583,7 +583,7 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
 
-    def add_ingredient_recipe_pairing(self, ingredient_name, recipe_name):
+    def add_ingredient_recipe_pairing(self, ingredient_name, recipe_name, user_id):
         """
         Adds a new ingredient-recipe pairing to the database.
     
@@ -601,7 +601,8 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("AddIngredientRecipePairing", [ingredient_name, recipe_name])
+            cursor.callproc("AddIngredientRecipePairing", [ingredient_name, 
+                                                           recipe_name, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -767,9 +768,13 @@ class BusinessLogic:
     def register_routes(self):
 
         self.app.debug = True
-        self.cors.init_app(self.app)
+        self.app.config.update(
+            SESSION_COOKIE_SAMESITE='None', 
+            SESSION_COOKIE_SECURE=True
+        )
+        self.cors.init_app(self.app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:8000"}})
         self.app.secret_key = os.environ.get('SECRET_KEY')
-
+        
         @self.app.route('/check_recipe/<p_recipe>')
         def check_recipe(p_recipe):
             """
@@ -783,7 +788,8 @@ class BusinessLogic:
               True if the recipe name is valid, False otherwise.
             """
             response_dict = { 'validity' : False }
-            all_recipe_names = self.dal.get_recipe_names()
+            current_user_id = session.get('user_id')
+            all_recipe_names = self.dal.get_recipe_names(user_id=current_user_id)
             if p_recipe in all_recipe_names:
                 response_dict['validity'] = True
             else:
@@ -793,8 +799,7 @@ class BusinessLogic:
             response.content_type = 'application/json'
             return response
 
-        @self.app.route('/cookbook_names')
-        @cross_origin()    
+        @self.app.route('/cookbook_names', methods=['GET', 'OPTIONS'])
         def get_cookbook_names():
             """
             This method returns a list of all the names of all the cookbooks in the database.
@@ -802,9 +807,14 @@ class BusinessLogic:
             Returns:
             - JSON response: A list of all cookbook names in the database.
             """
-            all_cookbook_names = self.dal.get_cookbook_names()
+            
+            current_user_id = session.get('user_id')
+            print(current_user_id)
+            all_cookbook_names = self.dal.get_cookbook_names(current_user_id)
+            print(all_cookbook_names)
             response = make_response(jsonify(all_cookbook_names))
             response.content_type = 'application/json'
+            print(response)
             return response
         
         @self.app.route("/cookbook_info/<p_cookbook>") 
@@ -822,11 +832,12 @@ class BusinessLogic:
               'recipes' is a list of recipes in the cookbook.
             """
             response_dict = { 'validity' : False, 'message': '', 'recipes': [] }
-            current_cookbook_names = self.dal.get_cookbook_names()
+            current_user_id = session.get('user_id')
+            current_cookbook_names = self.dal.get_cookbook_names(current_user_id)
             cookbook = p_cookbook
             if cookbook in current_cookbook_names:
-                cookbook_info = self.dal.get_cookbook_info(cookbook)
-                cookbook_recipes = self.dal.get_recipe_names(cookbook)
+                cookbook_info = self.dal.get_cookbook_info(cookbook, current_user_id)
+                cookbook_recipes = self.dal.get_recipe_names(user_id=current_user_id, cookbook_name=cookbook)
                 if cookbook_info[1] == 1:
                     response_dict["validity"] = True
                     response_dict["message"] = f"\n{cookbook_info[0]} is a book."
@@ -861,7 +872,10 @@ class BusinessLogic:
             website = data['new_website']
 
             #Call the DAL method to add the cookbook
-            self.dal.add_cookbook(cookbook_name, is_book, website)
+            current_user_id = session.get('user_id')
+            print(current_user_id)
+            print(type(current_user_id))
+            self.dal.add_cookbook(cookbook_name, is_book, current_user_id, website)
             response_dict = { 'message': f'Cookbook {cookbook_name} added successfully'}
             return jsonify(response_dict), 200
         
@@ -877,7 +891,8 @@ class BusinessLogic:
             - JSON response: A dictionary with a 'message' key indicating the success of the operation.
             - HTTP status code: 200 on success.
             """
-            self.dal.delete_cookbook(p_cookbook)
+            current_user_id = session.get('user_id')
+            self.dal.delete_cookbook(p_cookbook, current_user_id)
             response_dict = { 'message': f'Cookbook {p_cookbook} deleted successfully'}
             return jsonify(response_dict), 200
 
@@ -894,7 +909,8 @@ class BusinessLogic:
             Returns:
             - JSON response: A list of all recipe names in the specified cookbook.
             """
-            all_recipe_names = self.dal.get_recipe_names(p_cookbook)
+            current_user_id = session.get('user_id')
+            all_recipe_names = self.dal.get_recipe_names(user_id=current_user_id, cookbook_name=p_cookbook)
             response = make_response(jsonify(all_recipe_names))
             response.content_type = 'application/json'
             return response
@@ -907,7 +923,8 @@ class BusinessLogic:
             Returns:
             - JSON response: A list of all recipe names in the database.
             """
-            all_recipe_names = self.dal.get_recipe_names()
+            current_user_id = session.get('user_id')
+            all_recipe_names = self.dal.get_recipe_names(user_id=current_user_id)
             response = make_response(jsonify(all_recipe_names))
             response.content_type = 'application/json'
             return response
@@ -925,8 +942,9 @@ class BusinessLogic:
               'message' contains information about the recipe. 
               'ingredients' is a list of ingredients for the recipe.
             """
-            recipe_info = self.dal.get_recipe_info(p_recipe)
-            recipe_ingredients = self.dal.get_recipe_ingredients(p_recipe)
+            current_user_id = session.get('user_id')
+            recipe_info = self.dal.get_recipe_info(p_recipe, current_user_id)
+            recipe_ingredients = self.dal.get_recipe_ingredients(p_recipe, current_user_id)
             info_message = f"{recipe_info[0]} comes from {recipe_info[1]} and serves {recipe_info[2]} using: "
 
             response_dict = { 'message' : info_message, 'ingredients' : recipe_ingredients}
@@ -952,7 +970,8 @@ class BusinessLogic:
             servings = data['new_servings']
 
             #Call the DAL method to add the cookbook
-            self.dal.add_recipe(recipe_name, cookbook_name, servings)
+            current_user_id = session.get('user_id')
+            self.dal.add_recipe(recipe_name, cookbook_name, servings, current_user_id)
             response_dict = { 'message': f'Recipe {recipe_name} added successfully'}
             return jsonify(response_dict), 200
 
@@ -968,7 +987,8 @@ class BusinessLogic:
             - JSON response: A dictionary with a 'message' key indicating the success of the operation.
             - HTTP status code: 200 on success.
             """
-            self.dal.delete_recipe(p_recipe)
+            current_user_id = session.get('user_id')
+            self.dal.delete_recipe(p_recipe, current_user_id)
             response_dict = { 'message': f'Recipe {p_recipe} deleted successfully'}
             return jsonify(response_dict), 200
         
@@ -988,7 +1008,8 @@ class BusinessLogic:
             ingredient_name = data['new_ingredient']
 
             #Call the DAL method to add the ingredient
-            self.dal.add_ingredient(ingredient_name)
+            current_user_id = session.get('user_id')
+            self.dal.add_ingredient(ingredient_name, current_user_id)
             response_dict = { 'message': f'Ingredient {ingredient_name} added successfully'}
             return jsonify(response_dict), 200
         
@@ -1004,7 +1025,8 @@ class BusinessLogic:
             - JSON response: A dictionary with a 'message' key indicating the success of the operation.
             - HTTP status code: 200 on success.
             """
-            self.dal.delete_ingredient(p_ingredient)
+            current_user_id = session.get('user_id')
+            self.dal.delete_ingredient(p_ingredient, current_user_id)
             response_dict = { 'message': f'Ingredient {p_ingredient} deleted successfully'}
             return jsonify(response_dict), 200
         
@@ -1027,7 +1049,8 @@ class BusinessLogic:
             recipe_name = data['recipe_name']
 
             #Call the DAL method to add the pairing
-            self.dal.add_ingredient_recipe_pairing(ingredient_name, recipe_name)
+            current_user_id = session.get('user_id')
+            self.dal.add_ingredient_recipe_pairing(ingredient_name, recipe_name, current_user_id)
             response_dict = { 'message': f'Ingredient {ingredient_name} paired with recipe {recipe_name} successfully'}
             return jsonify(response_dict), 200
         
@@ -1084,7 +1107,8 @@ class BusinessLogic:
             password = data['password']
 
             # Get the hashed password from the database
-            user_info = self.dal.get_user_info(email)  # Replace with your own function
+            user_info = self.dal.get_user_info(email)
+            print(user_info)
             hashed_password = user_info[2]
         
             # Check if the password is correct
@@ -1107,7 +1131,7 @@ class BusinessLogic:
         The application will be accessible at 'localhost' on port '50051'.
         """
         print("Listening at 'localhost:50051'...")
-        self.app.run(host='localhost', port=50051)
+        self.app.run(host='0.0.0.0', port=50051)
     
 if __name__ == '__main__':      
     my_dal = DAL(sys.argv[1], sys.argv[2])
