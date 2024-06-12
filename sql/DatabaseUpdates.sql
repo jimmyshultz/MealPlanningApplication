@@ -6,12 +6,12 @@ DROP PROCEDURE IF EXISTS GetMealIngredients;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetMealIngredients (myRecipeName varchar(100))
+CREATE PROCEDURE GetMealIngredients (myRecipeName varchar(100), myUserId int)
 
 BEGIN
   SELECT Ingredients.IngredientName
   FROM Meal JOIN Ingredients ON Meal.IngredientId = Ingredients.Id
-  WHERE Meal.RecipeName = myRecipeName
+  WHERE Meal.RecipeName = myRecipeName AND Meal.UserId = myUserId
   ORDER BY Ingredients.IngredientName;
 END $$
 DELIMITER ;
@@ -22,11 +22,12 @@ DROP PROCEDURE IF EXISTS GetAllCookbookNames;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetAllCookbookNames ()
+CREATE PROCEDURE GetAllCookbookNames (myUserId INT)
 
 BEGIN
   SELECT CookbookName
-  FROM Cookbook;
+  FROM Cookbook
+  WHERE UserId = myUserId;
 END $$
 DELIMITER ;
 
@@ -36,12 +37,12 @@ DROP PROCEDURE IF EXISTS GetCookbookInfo;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetCookbookInfo(myCookbookName varchar(200))
+CREATE PROCEDURE GetCookbookInfo(myCookbookName varchar(200), myUserId INT)
 
 BEGIN
   SELECT *
   FROM Cookbook
-  WHERE CookbookName = myCookbookName;
+  WHERE CookbookName = myCookbookName AND UserId = myUserId;
 END $$
 DELIMITER ;
 
@@ -51,11 +52,12 @@ DROP PROCEDURE IF EXISTS GetAllRecipeNames;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetAllRecipeNames()
+CREATE PROCEDURE GetAllRecipeNames(myUserId int)
 
 BEGIN
   SELECT RecipeName
-  FROM Recipe;
+  FROM Recipe
+  WHERE Recipe.UserId = myUserId;
 END $$
 DELIMITER ;
 
@@ -65,12 +67,12 @@ DROP PROCEDURE IF EXISTS GetRecipesFromOneCookbook;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetRecipesFromOneCookbook(myCookbookName varchar(200))
+CREATE PROCEDURE GetRecipesFromOneCookbook(myCookbookName varchar(200), myUserId int)
 
 BEGIN
   SELECT RecipeName
   FROM Recipe
-  WHERE CookbookName = myCookbookName;
+  WHERE CookbookName = myCookbookName AND Recipe.UserId = myUserId;
 END $$
 DELIMITER ;
 
@@ -80,11 +82,11 @@ DROP PROCEDURE IF EXISTS GetRecipeInfo;
 
 DELIMITER $$
 
-CREATE PROCEDURE GetRecipeInfo(myRecipeName varchar(100))
+CREATE PROCEDURE GetRecipeInfo(myRecipeName varchar(100), myUserId int)
 
 BEGIN
   SELECT *
   FROM Recipe
-  WHERE RecipeName = myRecipeName;
+  WHERE RecipeName = myRecipeName AND UserId = myUserId;
 END $$
 DELIMITER ;

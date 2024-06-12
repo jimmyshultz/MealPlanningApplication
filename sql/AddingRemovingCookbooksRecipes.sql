@@ -9,7 +9,8 @@ DELIMITER $$
 CREATE PROCEDURE AddCookbook (
     myCookbook VARCHAR(200),
     myIsBook BOOL,
-    myWebsite VARCHAR(200)
+    myWebsite VARCHAR(200),
+    myUserId INT
 )
 BEGIN
     DECLARE cookbookCount INT;
@@ -17,12 +18,12 @@ BEGIN
     -- Check if the cookbook already exists
     SELECT COUNT(*) INTO cookbookCount
     FROM Cookbook
-    WHERE CookbookName = myCookbook;
+    WHERE CookbookName = myCookbook AND UserId = myUserId;
 
     -- If the cookbook does not exist, add it
     IF cookbookCount = 0 THEN
-        INSERT INTO Cookbook (CookbookName, IsBook, Website)
-        VALUES (myCookbook, myIsBook, myWebsite);
+        INSERT INTO Cookbook (CookbookName, IsBook, Website, UserId)
+        VALUES (myCookbook, myIsBook, myWebsite, myUserId);
     ELSE
         -- Optionally handle the case where the cookbook already exists
         SIGNAL SQLSTATE '45000'
@@ -39,7 +40,8 @@ DROP PROCEDURE IF EXISTS DeleteCookbook;
 DELIMITER $$
 
 CREATE PROCEDURE DeleteCookbook (
-    myCookbook VARCHAR(200)
+    myCookbook VARCHAR(200),
+    myUserId INT
 )
 BEGIN
     DECLARE cookbookCount INT;
@@ -47,12 +49,12 @@ BEGIN
     -- Check if the cookbook exists
     SELECT COUNT(*) INTO cookbookCount
     FROM Cookbook
-    WHERE CookbookName = myCookbook;
+    WHERE CookbookName = myCookbook AND UserId = myUserId;
 
     -- If the cookbook exists, delete it
     IF cookbookCount > 0 THEN
         DELETE FROM Cookbook
-        WHERE CookbookName = myCookbook;
+        WHERE CookbookName = myCookbook AND UserId = myUserId;
     ELSE
         -- Optionally handle the case where the cookbook does not exist
         SIGNAL SQLSTATE '45000'
@@ -72,7 +74,8 @@ CREATE PROCEDURE UpdateCookbook(
     myCookbook VARCHAR(200),
     newCookbookName VARCHAR(200),
     newIsBook BOOL,
-    newWebsite VARCHAR(200)
+    newWebsite VARCHAR(200),
+    myUserId INT
     
 )
 BEGIN
@@ -81,7 +84,7 @@ BEGIN
     -- Check if the cookbook exists
     SELECT COUNT(*) INTO bookCount
     FROM cookbook
-    WHERE CookbookName = myCookbook;
+    WHERE CookbookName = myCookbook AND UserId = myUserId;
 
     -- If the cookbook exists, update its information
     IF bookCount > 0 THEN
@@ -89,7 +92,7 @@ BEGIN
         SET CookbookName = newCookbookName,
             IsBook = newIsBook,
             Website = newWebsite
-        WHERE CookbookName = myCookbook;
+        WHERE CookbookName = myCookbook AND UserId = myUserId;
     ELSE
         -- Handle the case where the cookbook does not exist
         SIGNAL SQLSTATE '45000'
@@ -108,7 +111,8 @@ DELIMITER $$
 CREATE PROCEDURE AddRecipe (
     myRecipe VARCHAR(100),
     myCookbook VARCHAR(200),
-    myServings INT
+    myServings INT,
+    myUserId INT
 )
 BEGIN
     DECLARE recipeCount INT;
@@ -116,12 +120,12 @@ BEGIN
     -- Check if the recipe already exists
     SELECT COUNT(*) INTO recipeCount
     FROM Recipe
-    WHERE RecipeName = myRecipe AND CookbookName = myCookbook;
+    WHERE RecipeName = myRecipe AND UserId = myUserId AND CookbookName = myCookbook;
 
     -- If the recipe does not exist, add it
     IF recipeCount = 0 THEN
-        INSERT INTO Recipe (RecipeName, CookbookName, TotalServings)
-        VALUES (myRecipe, myCookbook, myServings);
+        INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId)
+        VALUES (myRecipe, myCookbook, myServings, myUserId);
     ELSE
         -- Optionally handle the case where the recipe already exists
         SIGNAL SQLSTATE '45000'
@@ -138,7 +142,8 @@ DROP PROCEDURE IF EXISTS DeleteRecipe;
 DELIMITER $$
 
 CREATE PROCEDURE DeleteRecipe (
-    IN myRecipe VARCHAR(100)
+    myRecipe VARCHAR(100),
+    myUserId INT
 )
 BEGIN
     DECLARE recipeCount INT;
@@ -146,12 +151,12 @@ BEGIN
     -- Check if the recipe exists
     SELECT COUNT(*) INTO recipeCount
     FROM Recipe
-    WHERE RecipeName = myRecipe;
+    WHERE RecipeName = myRecipe AND UserId = myUserId;
 
     -- If the recipe exists, delete it
     IF recipeCount > 0 THEN
         DELETE FROM Recipe
-        WHERE RecipeName = myRecipe;
+        WHERE RecipeName = myRecipe AND UserId = myUserId;
     ELSE
         -- Optionally handle the case where the recipe does not exist
         SIGNAL SQLSTATE '45000'
@@ -171,7 +176,8 @@ CREATE PROCEDURE UpdateRecipe(
     myRecipe VARCHAR(200),
     newRecipeName VARCHAR(100),
     newCookbookName VARCHAR(200),
-    newServings INT
+    newServings INT,
+    myUserId INT
 )
 BEGIN
     DECLARE recipeCount INT;
@@ -179,7 +185,7 @@ BEGIN
     -- Check if the recipe exists
     SELECT COUNT(*) INTO recipeCount
     FROM recipe
-    WHERE RecipeName = myRecipe;
+    WHERE RecipeName = myRecipe AND UserId = myUserId;
 
     -- If the recipe exists, update its information
     IF recipeCount > 0 THEN
@@ -187,7 +193,7 @@ BEGIN
         SET RecipeName = newRecipeName,
             CookbookName = newCookbookName,
             TotalServings = newServings
-        WHERE RecipeName = myRecipe;
+        WHERE RecipeName = myRecipe AND UserId = myUserId;
     ELSE
         -- Handle the case where the recipe does not exist
         SIGNAL SQLSTATE '45000'
@@ -204,7 +210,8 @@ DROP PROCEDURE IF EXISTS AddIngredient;
 DELIMITER $$
 
 CREATE PROCEDURE AddIngredient (
-    myIngredient VARCHAR(100)
+    myIngredient VARCHAR(100),
+    myUserId INT
 )
 BEGIN
     DECLARE ingredientCount INT;
@@ -212,12 +219,12 @@ BEGIN
     -- Check if the ingredient already exists
     SELECT COUNT(*) INTO ingredientCount
     FROM Ingredients
-    WHERE IngredientName = myIngredient;
+    WHERE IngredientName = myIngredient AND UserId = myUserId;
 
     -- If the ingredient does not exist, add it
     IF ingredientCount = 0 THEN
-        INSERT INTO Ingredients (IngredientName)
-        VALUES (myIngredient);
+        INSERT INTO Ingredients (IngredientName, UserId)
+        VALUES (myIngredient, myUserId);
     ELSE
         -- Optionally handle the case where the ingredient already exists
         SIGNAL SQLSTATE '45000'
@@ -234,7 +241,8 @@ DROP PROCEDURE IF EXISTS DeleteIngredient;
 DELIMITER $$
 
 CREATE PROCEDURE DeleteIngredient (
-    myIngredient VARCHAR(100)
+    myIngredient VARCHAR(100),
+    myUserId INT
 )
 BEGIN
     DECLARE ingredientCount INT;
@@ -242,12 +250,12 @@ BEGIN
     -- Check if the ingredient exists
     SELECT COUNT(*) INTO ingredientCount
     FROM Ingredients
-    WHERE IngredientName = myIngredient;
+    WHERE IngredientName = myIngredient AND UserId = myUserId;
 
     -- If the ingredient exists, delete it
     IF ingredientCount > 0 THEN
         DELETE FROM Ingredients
-        WHERE IngredientName = myIngredient;
+        WHERE IngredientName = myIngredient AND UserId = myUserId;
     ELSE
         -- Optionally handle the case where the ingredient does not exist
         SIGNAL SQLSTATE '45000'
@@ -265,7 +273,8 @@ DELIMITER $$
 
 CREATE PROCEDURE UpdateIngredient(
     myIngredient VARCHAR(100),
-    newIngredientName VARCHAR(100)
+    newIngredientName VARCHAR(100),
+    myUserId INT
 )
 BEGIN
     DECLARE ingredientCount INT;
@@ -273,13 +282,13 @@ BEGIN
     -- Check if the ingredient exists
     SELECT COUNT(*) INTO ingredientCount
     FROM ingredients
-    WHERE IngredientName = myIngredient;
+    WHERE IngredientName = myIngredient AND UserId = myUserId;
 
     -- If the recipe exists, update its information
     IF ingredientCount > 0 THEN
         UPDATE ingredients
         SET IngredientName = newIngredientName
-        WHERE IngredientName = myIngredient;
+        WHERE IngredientName = myIngredient AND UserId = myUserId;
     ELSE
         -- Handle the case where the ingredient does not exist
         SIGNAL SQLSTATE '45000'
@@ -297,7 +306,8 @@ DELIMITER $$
 
 CREATE PROCEDURE AddIngredientRecipePairing(
     myIngredient VARCHAR(100),
-    myRecipe VARCHAR(100)
+    myRecipe VARCHAR(100),
+    myUserId INT
 )
 BEGIN
     DECLARE pairingCount INT;
@@ -306,7 +316,7 @@ BEGIN
     -- Get the ID associated to the ingredient name
     SELECT Id INTO myIngredientId
     FROM Ingredients
-    WHERE IngredientName = myIngredient;
+    WHERE IngredientName = myIngredient AND UserId = myUserId;
     
     IF myIngredientId IS NULL THEN
         -- Handle the case where the ingredient does not exist
@@ -316,12 +326,12 @@ BEGIN
 		-- Check if the pairing exists
         SELECT COUNT(*) INTO pairingCount
         FROM meal
-        WHERE IngredientId = myIngredientId and RecipeName = myRecipe;
+        WHERE IngredientId = myIngredientId AND RecipeName = myRecipe AND UserId = myUserId;
 
         -- If the pairing doesn't exists, add it to the meal relation
         IF pairingCount = 0 THEN
-            INSERT INTO Meal (RecipeName, IngredientId)
-            VALUES (myRecipe, myIngredientId);
+            INSERT INTO Meal (RecipeName, UserId, IngredientId)
+            VALUES (myRecipe, myUserId, myIngredientId);
         ELSE
             -- Handle the case where the pairing already exists
             SIGNAL SQLSTATE '45000'
