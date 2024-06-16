@@ -409,13 +409,21 @@ function displayLoginForm() {
 
 }
 
-function displayEmailInNav(email) {
+function displayLoggedInNav(email) {
+  cookbookRecipeSectionHTML = `<ul class="navbar-nav" id="nav-cookbook-recipe-section"><li class="nav-item"><a class="nav-link" href="#" id="cookbooks-nav" onclick="displayCookbookNames()">Cookbooks</a></li>`;
+  cookbookRecipeSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="recipes-nav" onclick="displayRecipeNames()">Recipes</a></li></ul>`
+  document.getElementById('nav-cookbook-recipe-section').innerHTML = cookbookRecipeSectionHTML;
+
   userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="#">Hello, ${email}</a></li>`;
   userSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="logout" onclick="logout();">Logout</a></li></ul>`;
   document.getElementById('nav-user-section').innerHTML = userSectionHTML;
 }
 
 function displayLoggedOutNav () {
+  cookbookRecipeSectionHTML = `<ul class="navbar-nav" id="nav-cookbook-recipe-section"><li class="nav-item"><a class="nav-link" href="#" id="cookbooks-nav">Cookbooks</a></li>`;
+  cookbookRecipeSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="recipes-nav">Recipes</a></li></ul>`
+  document.getElementById('nav-cookbook-recipe-section').innerHTML = cookbookRecipeSectionHTML;
+
   userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="register" onclick="displayRegisterForm();">Register</a></li>`;
   userSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="login" onclick="displayLoginForm();">Login</a></li></ul>`;
   document.getElementById('nav-user-section').innerHTML = userSectionHTML;
@@ -716,7 +724,7 @@ async function login(email, password) {
 
     if (data.success) {
       alert(`Login with ${email} successful!`);
-      displayEmailInNav(email);
+      displayLoggedInNav(email);
       getCookbookNames();
       getAllRecipeNames();
       displayBlank();
