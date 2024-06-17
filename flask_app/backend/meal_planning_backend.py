@@ -1118,7 +1118,10 @@ class BusinessLogic:
                 print(session['user_id'])
         
                 response_dict = {'message': f'User {email} logged in successfully', 
-                                 'success': True}
+                                 'success': True,
+                                 'first_name': user_info[3],
+                                 'last_name': user_info[4],
+                                 'email': user_info[1]}
                 return jsonify(response_dict), 200
             else:
                 response_dict = { 'message': 'Error: Incorrect password', 'success': False}

@@ -6,12 +6,26 @@ class Cache {
   constructor() {
     this.cookbookNames;
     this.recipeNames;
+    this.user = {
+      firstName: "",
+      lastName: "",
+      email: ""
+    }
   }
 }
 
 function clearCache() {
   myCache.cookbookNames = [];
   myCache.recipeNames = [];
+  myCache.user.firstName = "";
+  myCache.user.lastName = "";
+  myCache.user.email = "";
+}
+
+function setUser(firstName, lastName, email) {
+  myCache.user.firstName = firstName;
+  myCache.user.lastName = lastName;
+  myCache.user.email = email;
 }
 
 //object to hold the string of a recipe name for each day of the week
@@ -414,7 +428,7 @@ function displayLoggedInNav(email) {
   cookbookRecipeSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="recipes-nav" onclick="displayRecipeNames()">Recipes</a></li></ul>`
   document.getElementById('nav-cookbook-recipe-section').innerHTML = cookbookRecipeSectionHTML;
 
-  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="#">Hello, ${email}</a></li>`;
+  userSectionHTML = `<ul class="navbar-nav ms-auto" id="nav-user-section"><li class="nav-item"><a class="nav-link" href="#" id="user" onclick="displayUserProfile()">Hello, ${email}</a></li>`;
   userSectionHTML += `<li class="nav-item"><a class="nav-link" href="#" id="logout" onclick="logout();">Logout</a></li></ul>`;
   document.getElementById('nav-user-section').innerHTML = userSectionHTML;
 }
@@ -429,6 +443,27 @@ function displayLoggedOutNav () {
   document.getElementById('nav-user-section').innerHTML = userSectionHTML;
 
 }
+
+// display a card showing the logged in user's profile information
+
+function displayUserProfile() {
+  let profileHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
+  profileHTML += `<h5 class="card-title">${myCache.user.firstName} ${myCache.user.lastName}</h5>`;
+  profileHTML += `<p class="card-text">Email: ${myCache.user.email}</p>`;
+  profileHTML += `<button class="btn btn-primary" id="logout-button">Logout</button>`;
+  //profileHTML += `<button class="btn btn-danger" id="delete-user-button" data-user-id="${user.id}">Delete User</button>`;
+  profileHTML += '</div></div></div>';
+
+  const displayArea = document.getElementById('display-text');
+  displayArea.innerHTML = profileHTML;
+
+  // Attach event listeners
+  document.getElementById('logout-button').addEventListener('click', logout);
+  //document.getElementById('delete-user-button').addEventListener('click', function() {
+  //  deleteUser(this.dataset.userId);
+  //});
+}
+
 
 //Server Communication Functions
 
@@ -725,6 +760,7 @@ async function login(email, password) {
     if (data.success) {
       alert(`Login with ${email} successful!`);
       displayLoggedInNav(email);
+      setUser(data.first_name, data.last_name, email);
       getCookbookNames();
       getAllRecipeNames();
       displayBlank();
