@@ -45,17 +45,17 @@ CREATE PROCEDURE DeleteUser (
 BEGIN
     DECLARE userCount INT;
 
-    -- Check if the username exists
+    -- Check if the user exists
     SELECT COUNT(*) INTO userCount
     FROM Users
     WHERE Email = myEmail;
 
-    -- If the cookbook exists, delete it
+    -- If the user exists, delete it
     IF userCount > 0 THEN
         DELETE FROM Users
         WHERE Email = myEmail;
     ELSE
-        -- Optionally handle the case where the username does not exist
+        -- Optionally handle the case where the user does not exist
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'User does not exist';
     END IF;

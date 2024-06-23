@@ -450,8 +450,8 @@ function displayUserProfile() {
   let profileHTML = '<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">';
   profileHTML += `<h5 class="card-title">${myCache.user.firstName} ${myCache.user.lastName}</h5>`;
   profileHTML += `<p class="card-text">Email: ${myCache.user.email}</p>`;
-  profileHTML += `<button class="btn btn-primary" id="logout-button">Logout</button>`;
-  //profileHTML += `<button class="btn btn-danger" id="delete-user-button" data-user-id="${user.id}">Delete User</button>`;
+  profileHTML += `<button class="btn btn-primary m-2" id="logout-button">Logout</button>`;
+  profileHTML += `<button class="btn btn-danger m-2" id="delete-user-button">Delete User</button>`;
   profileHTML += '</div></div></div>';
 
   const displayArea = document.getElementById('display-text');
@@ -459,10 +459,13 @@ function displayUserProfile() {
 
   // Attach event listeners
   document.getElementById('logout-button').addEventListener('click', logout);
-  //document.getElementById('delete-user-button').addEventListener('click', function() {
-  //  deleteUser(this.dataset.userId);
-  //});
+  document.getElementById('delete-user-button').addEventListener('click', function() {
+    deleteUser(myCache.user.email);
+  });
 }
+
+
+
 
 
 //Server Communication Functions
@@ -735,6 +738,41 @@ async function addUser(email, password, firstName, lastName) {
   
   } catch (error) {
     console.error('Error adding user:', error);
+  }
+}
+
+// remove user from the database
+async function deleteUser(email) {
+  console.log("Trying to remove user from database through 'localhost:50051'");
+  let new_user_info = {
+                       email: email
+                      };
+  
+  try {
+    const response = await fetch(`${serverDomain}/delete_user`, {
+      method: 'DELETE', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify(new_user_info),
+      credentials: 'include'
+    });
+  
+    const data = await response.json()
+    console.log(data);
+
+    if (data.success) {
+      alert(`Deleted user ${myCache.user.email}`);
+      logout();
+      displayBlank();
+    } else {
+      console.log(data.success);
+      alert("User does not exist. Please try again.");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    }
+  
+  } catch (error) {
+    console.error('Error removing user:', error);
   }
 }
 

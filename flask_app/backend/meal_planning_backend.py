@@ -662,6 +662,42 @@ class DAL:
                 connector.close()
                 print("MySQL connection is closed.")
 
+    def delete_user(self, email):
+        """
+        Deletes a user from the database.
+
+        Parameters:
+        - email (str): The email of the user to delete.
+
+        Outputs:
+        - str: A success message if the user is deleted successfully.
+        - str: An error message if an error occurs.
+        """
+        try:
+            connector = mysql.connector.connect(user=self.dbuser_name, 
+                                                password=self.dbpassword,
+                                                host=self.host,
+                                                database=self.database)
+            cursor = connector.cursor()
+            cursor.callproc("DeleteUser", [email])
+        except mysql.connector.Error as err:
+            if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+                return "Something is wrong with your user name or password"
+            elif err.errno == errorcode.ER_BAD_DB_ERROR:
+                return "Database does not exist"
+            elif err.sqlstate == '45000':
+                return f"Error: {err.msg}"
+            else:
+                return err
+        else:
+            connector.commit()
+            return f"User '{email}' deleted successfully."
+        finally:
+            if cursor:
+                cursor.close()
+            if connector and connector.is_connected():
+                connector.close()
+
     def get_user_password(self, email):
         """
         Retrieves the password of a user from the database.
@@ -1089,6 +1125,34 @@ class BusinessLogic:
                 response_dict = { 'message': f'User {email} added successfully', 'success': True}
                 return jsonify(response_dict), 200
             
+        @self.app.route('/delete_user', methods=['DELETE'])
+        def delete_user():
+            """
+            This method deletes a user from the database.
+
+            Parameters:
+            - JSON request data with key 'email'.
+
+            Returns:
+            - JSON response: A dictionary with a 'message' key indicating the 
+                success of the operation.
+            - HTTP status code: 200 on success, 400 on failure.
+            """
+            data = request.json
+            email = data['email']
+
+            # Call the DAL method to delete the user
+            result = self.dal.delete_user(email)
+            print(result)
+
+            # Check the result and return the appropriate response
+            if result == "Something is wrong with your user name or password" or result == "Database does not exist" or result.startswith("Error:"):
+                    response_dict = { 'message': f"Error: {result}", 'success': False}
+                    return jsonify(response_dict), 400
+            else:
+                    response_dict = { 'message': f'User {email} deleted successfully', 'success': True}
+                    return jsonify(response_dict), 200
+            
         @self.app.route('/login', methods=['POST'])
         def login():
             """
@@ -1109,6 +1173,7 @@ class BusinessLogic:
             # Get the hashed password from the database
             user_info = self.dal.get_user_info(email)
             print(user_info)
+            # Need to fix this to check if a user exists before trying to take the pieces of information from user_info
             hashed_password = user_info[2]
         
             # Check if the password is correct
