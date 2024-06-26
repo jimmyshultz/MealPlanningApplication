@@ -726,6 +726,8 @@ class DAL:
                 return "Something is wrong with your user name or password"
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 return "Database does not exist"
+            elif err.sqlstate == '45000':
+                return f"Error: {err.msg}"
             else:
                 return err
         
@@ -761,6 +763,8 @@ class DAL:
                 return "Something is wrong with your user name or password"
             elif err.errno == errorcode.ER_BAD_DB_ERROR:
                 return "Database does not exist"
+            elif err.sqlstate == '45000':
+                return f"Error: {err.msg}"
             else:
                 return err
         
@@ -1173,7 +1177,12 @@ class BusinessLogic:
             # Get the hashed password from the database
             user_info = self.dal.get_user_info(email)
             print(user_info)
-            # Need to fix this to check if a user exists before trying to take the pieces of information from user_info
+
+            # Ensure user exists
+            if user_info == "Something is wrong with your user name or password" or user_info == "Database does not exist" or user_info == "Error: User does not exist":
+                response_dict = { 'message': f"Error: {user_info}", 'success': False}
+                return jsonify(response_dict), 400
+            
             hashed_password = user_info[2]
         
             # Check if the password is correct
