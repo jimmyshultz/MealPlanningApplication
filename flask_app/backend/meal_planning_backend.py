@@ -989,9 +989,23 @@ class BusinessLogic:
             current_user_id = session.get('user_id')
             recipe_info = self.dal.get_recipe_info(p_recipe, current_user_id)
             recipe_ingredients = self.dal.get_recipe_ingredients(p_recipe, current_user_id)
-            info_message = f"{recipe_info[0]} comes from {recipe_info[1]} and serves {recipe_info[2]} using: "
+            print(recipe_info)
+            print(recipe_ingredients)
 
-            response_dict = { 'message' : info_message, 'ingredients' : recipe_ingredients}
+            recipe_name = recipe_info[0]
+            cookbook_name = recipe_info[1]
+            servings = recipe_info[2]
+            if recipe_info[3] == 1:
+                is_online = True
+            else:
+                is_online = False
+            url = recipe_info[4]
+
+            response_dict = { 'recipe_name' : recipe_name, 
+                             'cookbook_name': cookbook_name, 
+                             'servings': servings, 'is_online': is_online, 
+                             'url': url, 
+                             'ingredients' : recipe_ingredients }
             response = make_response(jsonify(response_dict))
             response.content_type = 'application/json'
             return response

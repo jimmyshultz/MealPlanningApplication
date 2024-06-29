@@ -144,9 +144,17 @@ function displayRecipeNames() {
 // function to display recipe info for selected recipe
 
 function displayRecipeInfo(data, recipe_name) {
+  console.log(data);
   let recipeInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
   recipeInfoHTML += `<h5 class="card-title" id="recipe-name">${recipe_name}</h5>`;
-  recipeInfoHTML += `<p class="card-text">${data.message}</p>`;
+  if (data.is_online === true) {
+    recipeInfoHTML += `<p class="card-text"><a href="${data.url}" target="_blank">View Online</a></p>`;
+  } else {
+    recipeInfoHTML += `<p class="card-text">Physical Recipe</p>`;
+  }
+  recipeInfoHTML += `<p class="card-text">Cookbook: ${data.cookbook_name}</p>`;
+  recipeInfoHTML += `<p class="card-text">Servings: ${data.servings}</p>`;
+  recipeInfoHTML += `<p class="card-text">Ingredients:</p>`;
   recipeInfoHTML += '<ul class="list-group list-group-flush mb-3" id="ingredient-list">';
   for (let i = 0; i < data.ingredients.length; i++) {
     recipeInfoHTML += `<li class="list-group-item"><a href="#" class="text-decoration-none" data-ingredient="${data.ingredients[i]}">${data.ingredients[i]}</a></li>`;
