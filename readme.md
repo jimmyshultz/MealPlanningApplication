@@ -31,7 +31,7 @@ This is a web application for managing recipes and cookbooks. Users can create a
 
 ## Usage
 
-1. Open http://localhost:8000/index.html in the browser.
+1. Open http://localhost:8000/index.html in a Google Chrome or Mozilla Firefox browser.
 2. Register an account through the register button.
 3. Login into that account using the login button.
 4. Click the cookbooks and recipes nav elements.

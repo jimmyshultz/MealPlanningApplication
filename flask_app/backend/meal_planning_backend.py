@@ -809,7 +809,7 @@ class BusinessLogic:
 
         self.app.debug = True
         self.app.config.update(
-            SESSION_COOKIE_SAMESITE='None', 
+            SESSION_COOKIE_SAMESITE='Strict', 
             SESSION_COOKIE_SECURE=True
         )
         self.cors.init_app(self.app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:8000"}})
