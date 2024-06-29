@@ -249,9 +249,15 @@ function displayCookbookNames() {
 // function to display cookbook info in browser
 
 function displayCookbookInfo(data, cookbook_name) {
+  console.log(data);
+  
   let cookbookInfoHTML = `<div class="col-lg-6 mx-auto mb-4"><div class="card"><div class="card-body">`;
   cookbookInfoHTML += `<h5 class="card-title">${cookbook_name}</h5>`;
-  cookbookInfoHTML += `<p class="card-text">${data.message}</p>`;
+  if (data.online === true) {
+    cookbookInfoHTML += `<p class="card-text"><a href="${data.url}" target="_blank">${data.message}</a></p>`;
+  } else {
+    cookbookInfoHTML += `<p class="card-text">${data.message}</p>`;
+  }
   cookbookInfoHTML += `<p class="card-text">Recipes: </p>`;
   cookbookInfoHTML += '<ul class="list-group list-group-flush mb-3" id="recipe-list">';
   for (let i = 0; i < data.recipes.length; i++) {

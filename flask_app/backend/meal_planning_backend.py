@@ -871,7 +871,7 @@ class BusinessLogic:
               'message' contains information about the cookbook. 
               'recipes' is a list of recipes in the cookbook.
             """
-            response_dict = { 'validity' : False, 'message': '', 'recipes': [] }
+            response_dict = { 'validity' : False, 'cookbook_name': '', 'online': False, 'message': '', 'url': '', 'recipes': [] }
             current_user_id = session.get('user_id')
             current_cookbook_names = self.dal.get_cookbook_names(current_user_id)
             cookbook = p_cookbook
@@ -880,15 +880,19 @@ class BusinessLogic:
                 cookbook_recipes = self.dal.get_recipe_names(user_id=current_user_id, cookbook_name=cookbook)
                 if cookbook_info[1] == 1:
                     response_dict["validity"] = True
-                    response_dict["message"] = f"\n{cookbook_info[0]} is a book."
+                    response_dict["cookbook_name"] = f"{cookbook_info[0]}"
+                    response_dict['online'] = False
+                    response_dict["message"] = "Physical book"
                     response_dict["recipes"] = cookbook_recipes
                 else:
                     response_dict["validity"] = True
-                    response_dict["message"] = f"\n{cookbook_info[0]} is viewable on the internet at {cookbook_info[2]}"
+                    response_dict["cookbook_name"] = f"{cookbook_info[0]}"
+                    response_dict['online'] = True
+                    response_dict["message"] = "View Online"
+                    response_dict["url"] = f"{cookbook_info[2]}"
                     response_dict["recipes"] = cookbook_recipes
             else:
                 response_dict["validity"] = False
-                response_dict["message"] = ""
 
             response = make_response(jsonify(response_dict))
             response.content_type = 'application/json'
