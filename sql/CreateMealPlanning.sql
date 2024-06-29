@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS Recipe (
     RecipeName varchar(100) NOT NULL,
     CookbookName varchar(200),
     TotalServings int,
+    IsOnline bool not null,
     WebpageLink varchar(255),
     UserId int NOT NULL,
     PRIMARY KEY (RecipeName, UserId),
@@ -64,11 +65,11 @@ INSERT INTO Cookbook (CookbookName, IsBook, UserId) VALUES ("Dinner Staples", tr
 INSERT INTO Cookbook (CookbookName, IsBook, Website, UserId) VALUES ("Half Baked Harvest - Mains", false, "https://www.halfbakedharvest.com/category/recipes/type-of-meal/main-course/", 1);
 INSERT INTO Cookbook (CookbookName, IsBook, Website, UserId) VALUES ("Half Baked Harvest - Brunch", false, "https://www.halfbakedharvest.com/category/recipes/type-of-meal/brunch/", 1);
 
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId) VALUES ("Macaroni & Cheese", "Easy Meals", 2, 1);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId) VALUES ("Beans & Rice", "Easy Meals", 2, 1);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId) VALUES ("Hamburgers", "Dinner Staples", 4, 1);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", "Half Baked Harvest - Mains", 6, 1);
-INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId) VALUES ("Blueberry Croissant French Toast Bake", "Half Baked Harvest - Brunch", 6, 1);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, UserId) VALUES ("Macaroni & Cheese", "Easy Meals", 2, false, 1);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, UserId) VALUES ("Beans & Rice", "Easy Meals", 2, false, 1);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, UserId) VALUES ("Hamburgers", "Dinner Staples", 4, false, 1);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, WebpageLink, UserId) VALUES ("Grilled Buffalo Ranch Chicken Tacos", "Half Baked Harvest - Mains", 6, true, "https://www.halfbakedharvest.com/grilled-buffalo-ranch-chicken-tacos/", 1);
+INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, WebpageLink, UserId) VALUES ("Blueberry Croissant French Toast Bake", "Half Baked Harvest - Brunch", 6, true, "https://www.halfbakedharvest.com/blueberry-croissant-french-toast-bake/", 1);
 
 -- Macaroni and Cheese
 

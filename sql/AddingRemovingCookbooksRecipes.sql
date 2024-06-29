@@ -112,6 +112,8 @@ CREATE PROCEDURE AddRecipe (
     myRecipe VARCHAR(100),
     myCookbook VARCHAR(200),
     myServings INT,
+    myIsOnline BOOL,
+    myWebpageLink VARCHAR (255),
     myUserId INT
 )
 BEGIN
@@ -124,8 +126,8 @@ BEGIN
 
     -- If the recipe does not exist, add it
     IF recipeCount = 0 THEN
-        INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, UserId)
-        VALUES (myRecipe, myCookbook, myServings, myUserId);
+        INSERT INTO Recipe (RecipeName, CookbookName, TotalServings, IsOnline, WebpageLink, UserId)
+        VALUES (myRecipe, myCookbook, myServings, myIsOnline, myWebpageLink, myUserId);
     ELSE
         -- Optionally handle the case where the recipe already exists
         SIGNAL SQLSTATE '45000'

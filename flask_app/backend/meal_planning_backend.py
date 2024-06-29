@@ -353,7 +353,7 @@ class DAL:
             connector.close()
             return recipe_ingredients
         
-    def add_recipe(self, recipe_name, cookbook_name, servings, user_id):
+    def add_recipe(self, recipe_name, cookbook_name, servings, is_online, user_id, webpage=None):
         """
         Adds a new recipe to the database.
     
@@ -370,7 +370,7 @@ class DAL:
                                                 host=self.host,
                                                 database=self.database)
             cursor = connector.cursor()
-            cursor.callproc("AddRecipe", [recipe_name, cookbook_name, servings, user_id])
+            cursor.callproc("AddRecipe", [recipe_name, cookbook_name, servings, is_online, webpage, user_id])
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 print("Something is wrong with your user name or password")
@@ -1002,20 +1002,25 @@ class BusinessLogic:
             This method adds a new recipe to the database.
         
             Parameters:
-            - JSON request data with keys 'new_recipe_name', 'new_cookbook_name', and 'new_servings'.
+            - JSON request data with keys 'new_recipe_name', 
+              'new_cookbook_name', 'new_servings', 'new_is_online', 
+              and 'new_webpage'.
         
             Returns:
             - JSON response: A dictionary with a 'message' key indicating the success of the operation.
             - HTTP status code: 200 on success.
             """
             data = request.json
+            print(data)
             recipe_name = data['new_recipe_name']
             cookbook_name = data['new_cookbook_name']
             servings = data['new_servings']
+            is_online = data['new_is_online']
+            webpage = data['new_webpage']
 
-            #Call the DAL method to add the cookbook
+            #Call the DAL method to add the recipe
             current_user_id = session.get('user_id')
-            self.dal.add_recipe(recipe_name, cookbook_name, servings, current_user_id)
+            self.dal.add_recipe(recipe_name, cookbook_name, servings, is_online, current_user_id, webpage)
             response_dict = { 'message': f'Recipe {recipe_name} added successfully'}
             return jsonify(response_dict), 200
 

@@ -326,6 +326,15 @@ function displayAddRecipeForm() {
     formHTML += `<option value="${myCache.cookbookNames[i]}">${myCache.cookbookNames[i]}</option>`;
   }
   formHTML += '</select></div>';
+  formHTML += '<div class="mb-3"><label for="is_online" class="form-label">Is this recipe online?</label><br>';
+  formHTML += '<div class="form-check form-check-inline">';
+  formHTML += '<input class="form-check-input" type="radio" id="is_online_yes" name="is_online" value="yes">';
+  formHTML += '<label class="form-check-label" for="is_online_yes">Yes</label></div>';
+  formHTML += '<div class="form-check form-check-inline">';
+  formHTML += '<input class="form-check-input" type="radio" id="is_online_no" name="is_online" value="no">';
+  formHTML += '<label class="form-check-label" for="is_online_no">No</label></div></div>';
+  formHTML += '<div class="mb-3"><label for="webpage" class="form-label">Webpage (if applicable):</label>';
+  formHTML += '<input type="url" class="form-control" id="webpage" name="webpage"></div>';
   formHTML += '<div class="mb-3"><label for="servings" class="form-label">Number of Servings:</label>';
   formHTML += '<select class="form-select" id="servings" name="servings">';
   for (let i = 1; i <= 20; i++) {
@@ -586,9 +595,9 @@ async function deleteCookbook(cookbook_name) {
 
 //add a recipe to the database on cookbook info view
 
-async function addRecipe(recipe_name, cookbook_name, servings) {
+async function addRecipe(recipe_name, cookbook_name, servings, isOnline, webpage) {
   console.log(`Trying to add recipe ${recipe_name} to database through 'localhost:50051'`);
-  let new_recipe_info = {new_recipe_name: recipe_name, new_cookbook_name: cookbook_name, new_servings: servings}
+  let new_recipe_info = {new_recipe_name: recipe_name, new_cookbook_name: cookbook_name, new_servings: servings, new_is_online: isOnline, new_webpage: webpage}
 
   try {
     const response = await fetch(`${serverDomain}/add_recipe`, {
@@ -873,7 +882,9 @@ function handleAddRecipeSubmit(event) {
   let recipe_name = document.getElementById('recipe_name').value;
   let cookbook_name = document.getElementById('cookbook_name').value;
   let servings = parseInt(document.getElementById('servings').value, 10)
-  addRecipe(recipe_name, cookbook_name, servings);
+  let isOnline = document.querySelector('input[name="is_online"]:checked').value === 'yes';
+  let webpage = document.getElementById('webpage').value;
+  addRecipe(recipe_name, cookbook_name, servings, isOnline, webpage);
 }
 
 //handle submit on add ingredient form
