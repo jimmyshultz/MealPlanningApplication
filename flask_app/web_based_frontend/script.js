@@ -20,6 +20,8 @@ function clearCache() {
   myCache.user.firstName = "";
   myCache.user.lastName = "";
   myCache.user.email = "";
+  myMealPlan.clearPlan();
+  refreshMealPlanTable();
 }
 
 function setUser(firstName, lastName, email) {
@@ -99,6 +101,16 @@ class WeeklyMealPlan {
   
     getSunday() {
       return this.sunday;
+    }
+
+    clearPlan() {
+      this.monday = "";
+      this.tuesday = "";
+      this.wednesday = "";
+      this.thursday = "";
+      this.friday = "";
+      this.saturday = "";
+      this.sunday = "";
     }
   }
 

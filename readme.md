@@ -37,3 +37,9 @@ This is a web application for managing recipes and cookbooks. Users can create a
 4. Click the cookbooks and recipes nav elements.
 5. Add, delete, and view cookbooks, recipes, and ingredients as able through functionality.
 6. Assign recipes to days of the week.
+
+## Testing
+1. Navigate to the tests directory: `cd tests`
+2. Set the database username and password environment variables: `export DB_USER_NAME={your_db_user_name}, export DB_PASSWORD={your_db_password}`
+3. Run DAL tests: `pytest test_dal.py`
+4. Run BL tests: `pytest test_bl.py`

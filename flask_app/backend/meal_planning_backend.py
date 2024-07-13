@@ -810,7 +810,7 @@ class BusinessLogic:
         self.app.debug = True
         self.app.config.update(
             SESSION_COOKIE_SAMESITE='Strict', 
-            SESSION_COOKIE_SECURE=True
+            SESSION_COOKIE_SECURE=False
         )
         self.cors.init_app(self.app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:8000"}})
         self.app.secret_key = os.environ.get('SECRET_KEY')
