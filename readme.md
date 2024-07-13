@@ -24,8 +24,8 @@ This is a web application for managing recipes and cookbooks. Users can create a
 4. Navigate to the project directory: `cd MealPlanningApplication`
 5. Setup MealPlanningDatabase `mysql -u root - p < sql/CreateMealPlanning.sql`, `mysql -u root - p < sql/DatabaseUpdates.sql`, `mysql -u root - p < sql/AddingRemovingCookbooksRecipes.sql`
 6. Install the dependencies: `pip install -r flask_app/requirements.txt`
-7. Set the secret key: `export SECRET_KEY={your_secret_key}`
-8. Start the backend server: `python flask_app/backend/meal_planning_backend.py {your_db_username} {your_db_password}`
+7. Set the secret key, database username, and database password: `export SECRET_KEY={your_secret_key}`, `export DB_USER={your_db_username}`, `export DB_PASSWORD={your_db_password}`
+8. Start the backend server: `python flask_app/backend/meal_planning_backend.py`
 9. Open a second terminal and navigate to the frontend directory: `cd MealPlanningApplication/flask_app/web_based_frontend`
 10. Start the frontend server: `python -m http.server 8000`
 

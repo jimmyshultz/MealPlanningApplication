@@ -117,7 +117,7 @@ class WeeklyMealPlan {
 //initialize objects
 let myMealPlan = new WeeklyMealPlan();
 let myCache = new Cache();
-let serverDomain = 'http://localhost:50051'
+let serverDomain = 'http://localhost:5000'
 
 
 

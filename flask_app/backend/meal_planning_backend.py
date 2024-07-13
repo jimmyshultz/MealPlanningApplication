@@ -48,9 +48,9 @@ class DAL:
     - get user password
     - get user info
     """
-    def __init__(self, p_user_name, p_dbpassword):
-        self.dbuser_name = p_user_name
-        self.dbpassword = p_dbpassword
+    def __init__(self):
+        self.dbuser_name = os.environ.get('DB_USER')
+        self.dbpassword = os.environ.get('DB_PASSWORD')
         self.host = "127.0.0.1"
         self.database = "MealPlanning"
 
@@ -807,10 +807,10 @@ class BusinessLogic:
 
     def register_routes(self):
 
-        self.app.debug = True
+        self.app.debug = False
         self.app.config.update(
             SESSION_COOKIE_SAMESITE='Strict', 
-            SESSION_COOKIE_SECURE=False
+            SESSION_COOKIE_SECURE=True
         )
         self.cors.init_app(self.app, supports_credentials=True, resources={r"/*": {"origins": "http://localhost:8000"}})
         self.app.secret_key = os.environ.get('SECRET_KEY')
@@ -1244,12 +1244,12 @@ class BusinessLogic:
         """
         This method starts the Flask application on the local machine.
     
-        The application will be accessible at 'localhost' on port '50051'.
+        The application will be accessible on port '5000'.
         """
-        print("Listening at 'localhost:50051'...")
-        self.app.run(host='0.0.0.0', port=50051)
+        print("Listening at '0.0.0.0:5000'...")
+        self.app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
     
 if __name__ == '__main__':      
-    my_dal = DAL(sys.argv[1], sys.argv[2])
+    my_dal = DAL()
     my_bl = BusinessLogic(my_dal)
     my_bl.run()
